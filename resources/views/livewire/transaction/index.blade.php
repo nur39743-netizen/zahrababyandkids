@@ -1,6 +1,7 @@
 <div class="max-w-md mx-auto space-y-4">
-    <div class="flex justify-between items-center mb-2">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-2">
         <h2 class="text-xl font-bold text-pink-700">Histori Transaksi</h2>
+        <a href="/transactions/trashed" class="bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold border border-gray-200 hover:bg-gray-100 transition">Transaksi Terhapus</a>
     </div>
 
     <!-- Filter -->
@@ -10,9 +11,9 @@
     </div>
 
     @if(session()->has('success'))
-        <div class="p-3 bg-green-50 text-green-600 rounded-lg text-sm text-center border border-green-100 font-bold">
-            {{ session('success') }}
-        </div>
+    <div class="p-3 bg-green-50 text-green-600 rounded-lg text-sm text-center border border-green-100 font-bold">
+        {{ session('success') }}
+    </div>
     @endif
 
     <!-- List -->
@@ -29,7 +30,7 @@
                     <span class="bg-green-100 text-green-700 font-bold text-[9px] px-2 py-0.5 rounded">{{ $trx->payment_method }}</span>
                 </div>
             </div>
-            
+
             <div class="p-3 flex justify-between items-center text-xs">
                 <div class="text-gray-600">
                     <p class="font-bold text-[11px] text-gray-500">👤 {{ $trx->customer ? $trx->customer->nama_customer : 'Pelanggan Umum' }}</p>

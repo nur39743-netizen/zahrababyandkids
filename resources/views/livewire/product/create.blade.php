@@ -12,6 +12,14 @@
                 <input type="text" wire:model="nama_produk" required class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
             </div>
 
+            <div>
+                <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
+                <input type="file" wire:model="foto" accept="image/*" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @if($foto)
+                <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
+                @endif
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Kategori <span class="text-red-500">*</span></label>
@@ -71,6 +79,14 @@
                     <input type="number" wire:model="harga_jual" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner text-pink-600">
                 </div>
             </div>
+
+            <div>
+                <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Item</label>
+                <input type="file" wire:model="item_fotos.0" accept="image/*" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @if(isset($item_fotos[0]))
+                <img src="{{ $item_fotos[0]->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
+                @endif
+            </div>
         </div>
         @else
         <!-- Varian Generator -->
@@ -79,16 +95,16 @@
                 <h3 class="font-bold text-pink-700 text-sm">Pilih Atribut Varian</h3>
                 <a href="/variants" class="text-[10px] bg-pink-100 text-pink-600 px-2 py-1 rounded font-bold hover:bg-pink-200">Kelola Master Varian</a>
             </div>
-            
+
             <div class="space-y-3 bg-pink-50/30 p-3 rounded-lg border border-pink-100">
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Varian 1 (Contoh: Warna) <span class="text-red-500">*</span></label>
                     <select wire:model.live="variant1_id" class="w-full rounded-lg border-pink-200 text-sm px-3 py-2 focus:border-pink-500 focus:ring-pink-500 shadow-inner">
                         <option value="">-- Pilih Atribut Varian 1 --</option>
                         @foreach($variant_attributes as $attr)
-                            @if($attr->id != $variant2_id)
-                            <option value="{{ $attr->id }}">{{ $attr->name }}</option>
-                            @endif
+                        @if($attr->id != $variant2_id)
+                        <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+                        @endif
                         @endforeach
                     </select>
                 </div>
@@ -111,9 +127,9 @@
                     <select wire:model.live="variant2_id" class="w-full rounded-lg border-pink-200 text-sm px-3 py-2 focus:border-pink-500 focus:ring-pink-500 shadow-inner">
                         <option value="">-- Pilih Atribut Varian 2 --</option>
                         @foreach($variant_attributes as $attr)
-                            @if($attr->id != $variant1_id)
-                            <option value="{{ $attr->id }}">{{ $attr->name }}</option>
-                            @endif
+                        @if($attr->id != $variant1_id)
+                        <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+                        @endif
                         @endforeach
                     </select>
                 </div>
@@ -160,23 +176,34 @@
                 <table class="w-full text-xs text-left whitespace-nowrap">
                     <thead class="text-gray-500 border-b border-gray-100">
                         <tr>
-                            <th class="py-2">Varian</th>
+                            <th class="py-2 sticky left-0 bg-white z-10">Varian</th>
+                            <th class="py-2 px-1">Foto</th>
                             <th class="py-2 px-1">Modal</th>
                             <th class="py-2 px-1 text-blue-600">Sell</th>
                             <th class="py-2 px-1 text-pink-600">Jual</th>
                             <th class="py-2 px-1">Stok</th>
+                            <th class="py-2 px-1">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach($matrix as $i => $row)
+                        @foreach($matrix as $index => $row)
                         <tr>
-                            <td class="py-2 font-medium text-gray-700">
+                            <td class="py-2 font-medium text-gray-700 sticky left-0 bg-white z-10">
                                 {{ $row['v1_val'] }} {{ $row['v2_val'] ? ' / '.$row['v2_val'] : '' }}
                             </td>
-                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$i}}.modal" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$i}}.sell" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-blue-600"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$i}}.jual" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-pink-600"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$i}}.stok" class="w-14 rounded text-[10px] px-1 py-1 border-gray-300 text-center"></td>
+                            <td class="py-2 px-1">
+                                <input type="file" wire:model="item_fotos.{{$index}}" accept="image/*" class="w-16 text-[10px]">
+                                @if(isset($item_fotos[$index]))
+                                <img src="{{ $item_fotos[$index]->temporaryUrl() }}" alt="Preview" class="mt-1 w-8 h-8 object-cover rounded">
+                                @endif
+                            </td>
+                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$index}}.modal" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$index}}.sell" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-blue-600"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$index}}.jual" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-pink-600"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="matrix.{{$index}}.stok" class="w-14 rounded text-[10px] px-1 py-1 border-gray-300 text-center"></td>
+                            <td class="py-2 px-1">
+                                <button type="button" wire:click="deleteItem({{ $index }})" wire:confirm="Apakah Anda yakin ingin menghapus item ini?" class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition">Hapus</button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -1,9 +1,14 @@
 <div>
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-pink-700">Daftar Produk</h2>
-        <a href="/products/create" class="bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow hover:shadow-lg transition">
-            + Tambah
-        </a>
+        <div class="flex gap-2">
+            <a href="/products/trashed" class="bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-100 hover:bg-gray-100 transition">
+                Terhapus
+            </a>
+            <a href="/products/create" class="bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow hover:shadow-lg transition">
+                + Tambah
+            </a>
+        </div>
     </div>
 
     <div class="mb-4">
@@ -22,25 +27,40 @@
     <div class="space-y-4">
         @foreach($products as $prod)
         <a href="/products/{{ $prod->id }}" class="block bg-white p-4 rounded-xl shadow-sm border border-pink-50 relative hover:shadow-md transition">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <h3 class="font-bold text-gray-800 text-lg leading-tight">{{ $prod->nama_produk }}</h3>
-                    <p class="text-xs text-gray-400 mt-1">Kode: {{ $prod->kode_produk ?? '-' }}
-                        @if($prod->category) • {{ $prod->category->nama_kategori }} @endif
-                    </p>
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    @if($prod->foto)
+                    <img src="{{ asset('storage/' . $prod->foto) }}" alt="{{ $prod->nama_produk }}" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
+                    @else
+                    <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    @endif
                 </div>
-                @if($prod->owner)
-                <span class="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-1 rounded font-bold border border-yellow-200">{{ $prod->owner->nama_owner }}</span>
-                @else
-                <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded font-bold border border-pink-200">Milik Sendiri</span>
-                @endif
-            </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg leading-tight">{{ $prod->nama_produk }}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Kode: {{ $prod->kode_produk ?? '-' }}
+                                @if($prod->category) • {{ $prod->category->nama_kategori }} @endif
+                            </p>
+                        </div>
+                        @if($prod->owner)
+                        <span class="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-1 rounded font-bold border border-yellow-200">{{ $prod->owner->nama_owner }}</span>
+                        @else
+                        <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded font-bold border border-pink-200">Milik Sendiri</span>
+                        @endif
+                    </div>
 
-            <div class="mt-3 flex justify-between items-center text-xs">
-                <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                    Total Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
-                </span>
-                <span class="text-pink-500 font-medium hover:underline">Lihat Detail & Varian &rarr;</span>
+                    <div class="mt-3 flex justify-between items-center text-xs">
+                        <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                            Total Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
+                        </span>
+                        <span class="text-pink-500 font-medium hover:underline">Lihat Detail & Varian &rarr;</span>
+                    </div>
+                </div>
             </div>
         </a>
         @endforeach

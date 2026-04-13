@@ -9,10 +9,10 @@ class Detail extends Component
 {
     public Product $product;
 
-    public function mount(Product $product)
+    public function delete()
     {
-        $product->load(['category', 'owner', 'items.variantOption1', 'items.variantOption2']);
-        $this->product = $product;
+        $this->product->delete(); // Soft delete
+        return redirect('/products')->with('message', 'Produk berhasil dinonaktifkan.');
     }
 
     public function render()

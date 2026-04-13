@@ -28,6 +28,7 @@ class Index extends Component
 
     // Customer
     public $customer_id = '';
+    public $customer_search = '';
     public $customer_name = '';
     public $customer_wa = '';
     public $customer_alamat = '';
@@ -121,20 +122,37 @@ class Index extends Component
          $this->cart[$index]['harga_aktif'] = $this->cart[$index]['harga_jual'];
     }
 
-    public function setCustomer($id)
+    public function updatedCustomerId($id)
     {
-        $this->customer_id = $id;
         if($id) {
             $c = Customer::find($id);
-            $this->customer_name = $c->nama_customer;
-            $this->customer_wa = $c->no_whatsapp;
-            $this->customer_alamat = $c->alamat;
-            $this->customer_catatan = $c->catatan;
+            if (!$c) {
+                $this->customer_id = '';
+                return;
+            }
+            $this->customer_name = $c->nama_customer ?? '';
+            $this->customer_wa = $c->no_whatsapp ?? '';
+            $this->customer_alamat = $c->alamat ?? '';
+            $this->customer_catatan = $c->catatan ?? '';
         } else {
             $this->customer_name = '';
             $this->customer_wa = '';
             $this->customer_alamat = '';
             $this->customer_catatan = '';
+        }
+    }
+
+    public function selectCustomerFromList($id)
+    {
+        $this->customer_id = (string) $id;
+        $this->updatedCustomerId($id);
+
+        if ($this->customer_id) {
+            $label = trim($this->customer_name);
+            if ($this->customer_wa) {
+                $label .= ' - ' . $this->customer_wa;
+            }
+            $this->customer_search = $label;
         }
     }
 
@@ -170,9 +188,14 @@ class Index extends Component
         try {
             $cust_id = null;
             if($this->customer_id) {
-                $cust_id = $this->customer_id;
-            } else {
-                $cName = trim($this->customer_name) ? trim($this->customer_name) : 'Pelanggan Umum';
+                $cust_id = (int) $this->customer_id;
+            } elseif (
+                trim((string) $this->customer_name) !== '' ||
+                trim((string) $this->customer_wa) !== '' ||
+                trim((string) $this->customer_alamat) !== '' ||
+                trim((string) $this->customer_catatan) !== ''
+            ) {
+                $cName = trim($this->customer_name) ?: 'Pelanggan Umum';
                 $newCust = Customer::create([
                     'nama_customer' => $cName,
                     'no_whatsapp' => $this->customer_wa,
@@ -241,9 +264,23 @@ class Index extends Component
             ->orderBy('id', 'desc')
             ->paginate(12);
 
+        $search = trim((string) $this->customer_search);
+        $customers = Customer::query()
+            ->withCount('transactions')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_customer', 'like', '%' . $search . '%')
+                        ->orWhere('no_whatsapp', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderByDesc('transactions_count')
+            ->orderByDesc('id')
+            ->limit(5)
+            ->get();
+
         return view('livewire.pos.index', [
             'products' => $products,
-            'customers' => Customer::all()
+            'customers' => $customers
         ])->layout('layouts.app');
     }
 }

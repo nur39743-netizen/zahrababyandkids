@@ -24,22 +24,22 @@
             <h3 class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Akses Cepat</h3>
         </div>
         <div class="grid grid-cols-4 gap-3">
-            <a href="/pos" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-pink-50 transition transform hover:-translate-y-1 group rounded-2xl">
+            <a href="/customers" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-pink-50 transition transform hover:-translate-y-1 group rounded-2xl">
                 <div class="w-12 h-12 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center group-hover:bg-pink-100 transition shadow-sm">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Kasir</span>
+                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Pelanggan</span>
             </a>
 
-            <a href="/transactions" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-blue-50 transition transform hover:-translate-y-1 group rounded-2xl">
+            <a href="/owners" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-blue-50 transition transform hover:-translate-y-1 group rounded-2xl">
                 <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition shadow-sm">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </div>
-                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Riwayat</span>
+                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Owner</span>
             </a>
 
             <a href="/variants" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-purple-50 transition transform hover:-translate-y-1 group rounded-2xl">

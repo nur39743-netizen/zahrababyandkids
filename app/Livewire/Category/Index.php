@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Index extends Component
 {
     public $nama_kategori;
-    
+
     public function save()
     {
         $this->validate(['nama_kategori' => 'required|string|max:255|unique:categories,nama_kategori']);
@@ -19,7 +19,7 @@ class Index extends Component
         ]);
         $this->reset('nama_kategori');
     }
-    
+
     public function delete($id)
     {
         Category::find($id)->delete();
@@ -28,7 +28,7 @@ class Index extends Component
     public function render()
     {
         return view('livewire.category.index', [
-            'categories' => Category::orderBy('nama_kategori')->get()
+            'categories' => Category::withCount('products')->orderBy('nama_kategori')->get()
         ]);
     }
 }

@@ -1,4 +1,4 @@
-<div class="max-w-md mx-auto" x-data="{ searchOpen: false }">
+<div class="max-w-md mx-auto" x-data="{ searchOpen: false, customerOpen: false }">
     <div class="bg-white rounded-xl shadow-lg border border-pink-100">
         <!-- Header -->
         <div class="bg-gradient-to-r from-pink-500 to-rose-400 p-4 rounded-t-xl text-white flex justify-between items-center shadow-inner">
@@ -112,14 +112,35 @@
         <div class="p-3 border-t border-gray-100 bg-white space-y-3">
             
             <div class="bg-pink-50/50 p-3 rounded-lg border border-pink-100 space-y-2">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-start relative">
                     <label class="text-[11px] font-bold text-gray-600">Pelanggan</label>
-                    <select wire:change="setCustomer($event.target.value)" class="text-[10px] py-1 pl-2 pr-6 rounded border-pink-200 bg-white focus:ring-pink-500 w-3/5">
-                        <option value="">Pelanggan Baru (Umum)</option>
-                        @foreach($customers as $cust)
-                        <option value="{{ $cust->id }}">{{ $cust->nama_customer }}</option>
-                        @endforeach
-                    </select>
+                    <div class="w-3/5">
+                        <input
+                            type="text"
+                            wire:model.live.debounce.300ms="customer_search"
+                            @focus="customerOpen = true"
+                            @click="customerOpen = true"
+                            @input="$wire.set('customer_id', ''); $wire.set('customer_name', ''); $wire.set('customer_wa', ''); $wire.set('customer_alamat', ''); $wire.set('customer_catatan', '')"
+                            placeholder="Cari nama / no HP"
+                            class="w-full text-[10px] rounded border-gray-200 px-2 py-1.5 focus:border-pink-500"
+                        >
+                        <div x-cloak x-show="customerOpen" @click.away="customerOpen = false" x-transition class="absolute z-40 right-0 mt-1 w-3/5 bg-white border border-pink-100 shadow-lg rounded-lg max-h-56 overflow-y-auto">
+                            <button type="button" wire:click="$set('customer_search',''); $set('customer_id',''); $set('customer_name',''); $set('customer_wa',''); $set('customer_alamat',''); $set('customer_catatan','')" @click="customerOpen = false" class="w-full text-left px-3 py-2 text-[10px] font-semibold text-pink-600 hover:bg-pink-50 border-b border-pink-50">
+                                Pelanggan Baru (Umum)
+                            </button>
+                            @foreach($customers as $cust)
+                            <button type="button" wire:click="selectCustomerFromList({{ $cust->id }})" @click="customerOpen = false" class="w-full text-left px-3 py-2 text-[10px] hover:bg-gray-50 border-b border-gray-50 last:border-0">
+                                <div class="font-semibold text-gray-700">{{ $cust->nama_customer }}</div>
+                                <div class="text-gray-400">
+                                    {{ $cust->no_whatsapp ?: '-' }} | {{ $cust->transactions_count }} trx
+                                </div>
+                            </button>
+                            @endforeach
+                            @if($customers->isEmpty())
+                                <div class="px-3 py-2 text-[10px] text-gray-400">Tidak ada customer cocok.</div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 
                 @if(!$customer_id)
