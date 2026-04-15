@@ -38,6 +38,11 @@
                 </select>
                 @error('payment_method') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Tanggal Transaksi</label>
+                <input type="date" wire:model="transaction_date" class="w-full rounded-lg border-gray-200 text-sm px-3 py-2">
+                @error('transaction_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+            </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1">Status Ongkir</label>

@@ -28,6 +28,8 @@
                 <h3 class="font-bold text-gray-800 text-2xl leading-tight">{{ $product->nama_produk }}</h3>
                 <p class="text-sm text-gray-500 mt-1">Kode: <span class="font-semibold text-gray-700">{{ $product->kode_produk }}</span></p>
                 <p class="text-sm text-gray-500">Kategori: <span class="font-semibold text-gray-700">{{ $product->category ? $product->category->nama_kategori : '-' }}</span></p>
+                <p class="text-sm text-gray-500">Gender: <span class="font-semibold text-gray-700">{{ $product->gender === 'male' ? 'Laki-laki / Male' : ($product->gender === 'female' ? 'Perempuan / Female' : 'Unisex / Netral') }}</span></p>
+                <p class="text-sm text-gray-500">Bahan: <span class="font-semibold text-gray-700">{{ $product->bahan ?: '-' }}</span></p>
             </div>
             @if($product->owner)
             <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded font-bold border border-yellow-200">Titipan: {{ $product->owner->nama_owner }}</span>

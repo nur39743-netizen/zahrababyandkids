@@ -15,6 +15,7 @@ class Edit extends Component
     public Transaction $transaction;
     public $customer_id;
     public $payment_method;
+    public $transaction_date;
     public $status_ongkir;
     public $status_packing;
     public $catatan;
@@ -44,6 +45,7 @@ class Edit extends Component
         $this->transaction = $transaction;
         $this->customer_id = $transaction->customer_id;
         $this->payment_method = $transaction->payment_method;
+        $this->transaction_date = optional($transaction->transaction_date)->toDateString() ?: optional($transaction->created_at)->toDateString();
         $this->status_ongkir = $transaction->status_ongkir;
         $this->status_packing = $transaction->status_packing;
         $this->catatan = $transaction->catatan;
@@ -230,6 +232,7 @@ class Edit extends Component
     {
         $this->validate([
             'payment_method' => 'required|string',
+            'transaction_date' => 'required|date',
             'status_ongkir' => 'required|string',
             'status_packing' => 'required|string',
             'status' => 'required|string',
@@ -241,6 +244,7 @@ class Edit extends Component
             $this->transaction->update([
                 'customer_id' => $this->customer_id ?: null,
                 'payment_method' => $this->payment_method,
+                'transaction_date' => $this->transaction_date,
                 'status_ongkir' => $this->status_ongkir,
                 'status_packing' => $this->status_packing,
                 'catatan' => $this->catatan,

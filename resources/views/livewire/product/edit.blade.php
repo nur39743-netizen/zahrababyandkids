@@ -49,6 +49,21 @@
                     @endforeach
                 </select>
             </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Gender Produk <span class="text-red-500">*</span></label>
+                    <select wire:model="gender" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                        <option value="male">Laki-laki / Male</option>
+                        <option value="female">Perempuan / Female</option>
+                        <option value="unisex">Unisex / Netral</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Bahan</label>
+                    <input type="text" wire:model="bahan" placeholder="Contoh: Katun, Rayon, Denim" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                </div>
+            </div>
         </div>
 
         <!-- Matrix Editor -->

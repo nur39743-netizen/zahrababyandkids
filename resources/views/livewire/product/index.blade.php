@@ -55,9 +55,19 @@
                     </div>
 
                     <div class="mt-3 flex justify-between items-center text-xs">
-                        <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                            Total Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
-                        </span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                                Total Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
+                            </span>
+                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                                {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
+                            </span>
+                            @if($prod->bahan)
+                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                                Bahan: <strong>{{ $prod->bahan }}</strong>
+                            </span>
+                            @endif
+                        </div>
                         <span class="text-pink-500 font-medium hover:underline">Lihat Detail & Varian &rarr;</span>
                     </div>
                 </div>

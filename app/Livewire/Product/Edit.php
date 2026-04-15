@@ -19,6 +19,8 @@ class Edit extends Component
     public $nama_produk;
     public $category_id;
     public $owner_id;
+    public $gender = 'unisex';
+    public $bahan = '';
     public $foto;
 
     public $items = [];
@@ -103,6 +105,8 @@ class Edit extends Component
         $this->nama_produk = $product->nama_produk;
         $this->category_id = $product->category_id;
         $this->owner_id = $product->owner_id;
+        $this->gender = $product->gender ?: 'unisex';
+        $this->bahan = $product->bahan ?: '';
         $this->foto = $product->foto;
 
         $attributeIds = [];
@@ -136,6 +140,8 @@ class Edit extends Component
         $this->validate([
             'nama_produk' => 'required|string',
             'category_id' => 'required',
+            'gender' => 'required|in:male,female,unisex',
+            'bahan' => 'nullable|string|max:255',
         ]);
 
         $fotoPath = $this->product->foto;
@@ -147,6 +153,8 @@ class Edit extends Component
             'nama_produk' => $this->nama_produk,
             'category_id' => $this->category_id ?: null,
             'owner_id' => $this->owner_id ?: null,
+            'gender' => $this->gender,
+            'bahan' => $this->bahan ?: null,
             'foto' => $fotoPath,
         ]);
 
