@@ -25,13 +25,15 @@ class Index extends Component
 
     public function render()
     {
-        $query = Transaction::with('customer')->orderBy('created_at', 'desc');
+        $query = Transaction::with('customer')
+            ->orderByDesc('transaction_date')
+            ->orderByDesc('created_at');
 
         if ($this->month) {
             try {
                 $parsedDate = Carbon::createFromFormat('Y-m', $this->month);
-                $query->whereYear('created_at', $parsedDate->year)
-                      ->whereMonth('created_at', $parsedDate->month);
+                $query->whereYear('transaction_date', $parsedDate->year)
+                    ->whereMonth('transaction_date', $parsedDate->month);
             } catch(\Exception $e){}
         }
 

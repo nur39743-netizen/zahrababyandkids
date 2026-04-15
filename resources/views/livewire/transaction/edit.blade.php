@@ -168,7 +168,7 @@
 
     <!-- Add Item Modal -->
     @if($showAddModal)
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-data="{ searchOpen: false }">
+    <div class="fixed inset-0 bg-pink-100 bg-opacity-50 flex items-center justify-center z-50" x-data="{ searchOpen: false }">
         <div class="bg-white rounded-lg p-6 w-full max-w-lg">
             <h3 class="text-lg font-bold mb-4">Tambah Item Baru</h3>
             <div class="space-y-4">
@@ -218,7 +218,11 @@
                     <div class="font-medium">{{ $selectedProduct->product->nama_produk }}</div>
                     <div class="text-sm text-gray-500">{{ $selectedProduct->variantString() }} - Stok: {{ $selectedProduct->stok_akhir }}</div>
                     <div class="flex gap-2 mt-2">
+                        <label for="">Jumlah</label>
                         <input type="number" wire:model="newItemQty" min="1" max="{{ $selectedProduct->stok_akhir }}" class="w-20 rounded border-gray-300 px-2 py-1" placeholder="Qty">
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <label for="">Diskon</label>
                         <input type="number" wire:model="newItemDiskon" min="0" class="w-24 rounded border-gray-300 px-2 py-1" placeholder="Diskon">
                         <button type="button" wire:click="addItem" class="bg-pink-600 text-white px-3 py-1 rounded text-sm">Tambah</button>
                     </div>

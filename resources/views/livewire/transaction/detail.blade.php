@@ -32,7 +32,10 @@
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-400 font-bold mb-0.5">Tanggal Checkout</p>
-                <p class="font-bold text-gray-700 text-sm">{{ $transaction->created_at->format('d M Y, H:i') }}</p>
+                <p class="font-bold text-gray-700 text-sm">
+                    {{ optional($transaction->transaction_date)->format('d M Y') ?: $transaction->created_at->format('d M Y') }},
+                    {{ $transaction->created_at->format('H:i') }}
+                </p>
             </div>
         </div>
 

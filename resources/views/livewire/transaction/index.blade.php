@@ -23,7 +23,10 @@
             <div class="p-4 bg-gradient-to-r from-pink-50 to-white flex justify-between items-center border-b border-gray-50">
                 <div>
                     <h3 class="font-bold text-gray-800 text-sm leading-none">{{ $trx->no_invoice }}</h3>
-                    <p class="text-[10px] text-gray-400 mt-1">{{ $trx->created_at->format('d/m/Y H:i') }}</p>
+                    <p class="text-[10px] text-gray-400 mt-1">
+                        {{ optional($trx->transaction_date)->format('d/m/Y') ?: $trx->created_at->format('d/m/Y') }}
+                        • {{ $trx->created_at->format('H:i') }}
+                    </p>
                 </div>
                 <div class="text-right">
                     <p class="text-sm font-bold text-pink-600">Rp{{ number_format($trx->total_netto, 0, ',', '.') }}</p>

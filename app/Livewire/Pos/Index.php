@@ -11,6 +11,7 @@ use App\Models\TransactionItem;
 use App\Models\ProductItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class Index extends Component
 {
@@ -39,6 +40,12 @@ class Index extends Component
     public $status_ongkir = 'Customer'; // Admin/Customer
     public $status_packing = 'Customer'; // Admin/Customer
     public $transaksi_catatan = '';
+    public $transaction_date = '';
+
+    public function mount()
+    {
+        $this->transaction_date = Carbon::today()->toDateString();
+    }
 
     public function updatingSearch()
     {
@@ -208,6 +215,7 @@ class Index extends Component
             $trx = Transaction::create([
                 'no_invoice' => 'INV' . date('ymd') . strtoupper(Str::random(4)),
                 'customer_id' => $cust_id,
+                'transaction_date' => $this->transaction_date ?: Carbon::today()->toDateString(),
                 'total_bruto' => $this->subtotal,
                 'total_diskon' => (int)$this->global_discount,
                 'biaya_ongkir' => (int)$this->biaya_ongkir,

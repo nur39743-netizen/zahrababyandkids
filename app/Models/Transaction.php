@@ -10,6 +10,9 @@ class Transaction extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+    protected $casts = [
+        'transaction_date' => 'date',
+    ];
 
     public function items()
     {
