@@ -11,7 +11,7 @@
 
             <div class="bg-white/20 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
                 <p class="text-[10px] text-pink-50 font-bold mb-1 tracking-widest uppercase flex items-center gap-1">
-                    Pendapatan Hari Ini
+                    Penjualan Hari Ini
                 </p>
                 <h3 class="text-3xl font-bold font-mono tracking-tight text-white">Rp{{ number_format($omsetHariIni, 0, ',', '.') }}</h3>
             </div>
@@ -49,6 +49,26 @@
                     </svg>
                 </div>
                 <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Varian</span>
+            </a>
+
+            <!-- Supplier -->
+            <a href="/suppliers" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-orange-50 transition transform hover:-translate-y-1 group rounded-2xl">
+                <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-100 transition shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Supplier</span>
+            </a>
+
+            <!-- Pembelian -->
+            <a href="/purchases" class="bg-white p-3 rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col items-center justify-start gap-2 hover:bg-teal-50 transition transform hover:-translate-y-1 group rounded-2xl">
+                <div class="w-12 h-12 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-100 transition shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3m-1 4a2 2 0 11-4 0 2 2 0 014 0zm-8 0a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <span class="text-[9px] font-bold text-gray-600 text-center uppercase tracking-wide">Pembelian</span>
             </a>
 
             <!-- Laporan (Fase 3 final) -->

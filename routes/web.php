@@ -24,6 +24,9 @@ use App\Livewire\Transaction\Detail as TransactionDetail;
 use App\Livewire\Transaction\Edit as TransactionEdit;
 use App\Livewire\Transaction\Trashed as TransactionTrashed;
 use App\Livewire\Dashboard\Index as DashboardIndex;
+use App\Livewire\Supplier\Index as SupplierIndex;
+use App\Livewire\Purchase\Index as PurchaseIndex;
+use App\Livewire\Purchase\Form as PurchaseForm;
 use App\Models\Transaction;
 
 Route::get('/', DashboardIndex::class);
@@ -60,3 +63,9 @@ Route::get('/products/create', ProductCreate::class);
 Route::get('/products/trashed', ProductTrashed::class);
 Route::get('/products/{product}', ProductDetail::class);
 Route::get('/products/{product}/edit', ProductEdit::class);
+
+// Suppliers & Purchases (Restock)
+Route::get('/suppliers', SupplierIndex::class);
+Route::get('/purchases', PurchaseIndex::class);
+Route::get('/purchases/create', PurchaseForm::class);
+Route::get('/purchases/{id}/edit', PurchaseForm::class)->where('id', '[0-9]+');

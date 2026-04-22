@@ -40,14 +40,25 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Status Kepemilikan</label>
-                <select wire:model="owner_id" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
-                    <option value="">Milik Sendiri</option>
-                    @foreach($owners as $own)
-                    <option value="{{ $own->id }}">{{ $own->nama_owner }}</option>
-                    @endforeach
-                </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Supplier</label>
+                    <select wire:model="supplier_id" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                        <option value="">Pilih Supplier...</option>
+                        @foreach($suppliers as $sup)
+                        <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Status Kepemilikan</label>
+                    <select wire:model="owner_id" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                        <option value="">Milik Sendiri</option>
+                        @foreach($owners as $own)
+                        <option value="{{ $own->id }}">{{ $own->nama_owner }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">

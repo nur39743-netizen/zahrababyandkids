@@ -19,6 +19,10 @@ class Product extends Model
     {
         return $this->belongsTo(Owner::class);
     }
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
     public function items()
     {
         return $this->hasMany(ProductItem::class);

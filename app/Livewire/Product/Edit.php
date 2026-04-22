@@ -19,6 +19,7 @@ class Edit extends Component
     public $nama_produk;
     public $category_id;
     public $owner_id;
+    public $supplier_id;
     public $gender = 'unisex';
     public $bahan = '';
     public $foto;
@@ -105,6 +106,7 @@ class Edit extends Component
         $this->nama_produk = $product->nama_produk;
         $this->category_id = $product->category_id;
         $this->owner_id = $product->owner_id;
+        $this->supplier_id = $product->supplier_id;
         $this->gender = $product->gender ?: 'unisex';
         $this->bahan = $product->bahan ?: '';
         $this->foto = $product->foto;
@@ -153,6 +155,7 @@ class Edit extends Component
             'nama_produk' => $this->nama_produk,
             'category_id' => $this->category_id ?: null,
             'owner_id' => $this->owner_id ?: null,
+            'supplier_id' => $this->supplier_id ?: null,
             'gender' => $this->gender,
             'bahan' => $this->bahan ?: null,
             'foto' => $fotoPath,
@@ -202,6 +205,7 @@ class Edit extends Component
         return view('livewire.product.edit', [
             'categories' => Category::all(),
             'owners' => Owner::all(),
+            'suppliers' => \App\Models\Supplier::orderBy('name')->get(),
             'variant_attributes' => $this->variant_attributes
         ]);
     }

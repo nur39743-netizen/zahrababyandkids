@@ -20,6 +20,7 @@ class Create extends Component
     public $nama_produk = '';
     public $category_id = '';
     public $owner_id = '';
+    public $supplier_id = '';
     public $gender = 'unisex';
     public $bahan = '';
     public $foto;
@@ -147,6 +148,7 @@ class Create extends Component
                 'kode_produk' => 'PRD' . date('ym') . strtoupper(Str::random(4)),
                 'category_id' => $this->category_id ?: null,
                 'owner_id' => $this->owner_id ?: null,
+                'supplier_id' => $this->supplier_id ?: null,
                 'gender' => $this->gender,
                 'bahan' => $this->bahan ?: null,
                 'foto' => $fotoPath,
@@ -198,6 +200,7 @@ class Create extends Component
         return view('livewire.product.create', [
             'categories' => Category::all(),
             'owners' => Owner::all(),
+            'suppliers' => \App\Models\Supplier::orderBy('name')->get(),
             'variant_attributes' => VariantAttribute::with('options')->get()
         ])->layout('layouts.app');
     }

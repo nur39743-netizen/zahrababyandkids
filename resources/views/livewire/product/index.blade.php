@@ -67,6 +67,11 @@
                                 Bahan: <strong>{{ $prod->bahan }}</strong>
                             </span>
                             @endif
+                            @if($prod->supplier)
+                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
+                                Supplier: <strong>{{ $prod->supplier->name }}</strong>
+                            </span>
+                            @endif
                         </div>
                         <span class="text-pink-500 font-medium hover:underline">Lihat Detail & Varian &rarr;</span>
                     </div>
