@@ -6,15 +6,17 @@
 
         <div class="relative z-10 hidden lg:block"></div>
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold font-serif mb-1 tracking-wide text-white">Halo, Admin 👋</h2>
-            <p class="text-xs text-pink-100 opacity-20 mb-5 font-medium tracking-wide">Ringkasan performa toko hari ini.</p>
+            <h2 class="text-2xl font-bold font-serif mb-1 tracking-wide text-white">Halo, {{ auth()->user()->name }} 👋</h2>
+            <p class="text-xs text-pink-100 opacity-20 mb-5 font-medium tracking-wide"></p>
 
+            @if(auth()->user()->role === 'super_admin')
             <div class="bg-white/20 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
                 <p class="text-[10px] text-pink-50 font-bold mb-1 tracking-widest uppercase flex items-center gap-1">
                     Penjualan Hari Ini
                 </p>
                 <h3 class="text-3xl font-bold font-mono tracking-tight text-white">Rp{{ number_format($omsetHariIni, 0, ',', '.') }}</h3>
             </div>
+            @endif
         </div>
     </div>
 
@@ -83,6 +85,7 @@
         </div>
     </div>
 
+    @if(auth()->user()->role === 'super_admin')
     <!-- Monthly Filter Header -->
     <div class="flex items-center justify-between border-t border-pink-100/50 pt-5 px-1 mt-2">
         <h3 class="text-[11px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
@@ -154,4 +157,5 @@
             </div>
         </a>
     </div>
+    @endif
 </div>

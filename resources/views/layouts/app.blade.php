@@ -13,18 +13,30 @@
 
 <body class="bg-pink-50 text-gray-800 antialiased min-h-screen flex flex-col font-sans">
 
+    @auth
     <!-- Header (Optional Topbar) -->
-    <header class="bg-white shadow">
+    <header class="bg-white shadow relative z-20">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-xl font-bold font-serif text-pink-600">{{ $title ?? 'Zahrababyandkids' }}</h1>
+            
+            <form action="/logout" method="POST" class="m-0 p-0">
+                @csrf
+                <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition shadow-sm" title="Logout">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </button>
+            </form>
         </div>
     </header>
+    @endauth
 
-    <!-- Main Content (scrollable space above bottombar) -->
-    <main class="flex-1 w-full max-w-md mx-auto p-4 mb-20">
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-md mx-auto {{ auth()->check() ? 'p-4 mb-20' : '' }}">
         {{ $slot }}
     </main>
 
+    @auth
     <!-- Bottom Action Bar -->
     <div class="fixed bottom-0 left-0 w-full z-50 bg-white border-t border-pink-100 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <div class="max-w-md mx-auto flex justify-around items-center px-2 py-2">
@@ -66,6 +78,7 @@
             </a>
         </div>
     </div>
+    @endauth
 
     @livewireScripts
 </body>

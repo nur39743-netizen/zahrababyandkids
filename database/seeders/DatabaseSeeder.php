@@ -15,12 +15,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::updateOrCreate(
+            ['email' => 'super@admin.com'],
+            [
+                'name' => 'Mama Almahyra',
+                'password' => bcrypt('password'),
+                'role' => 'super_admin'
+            ]
+        );
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::updateOrCreate(
+            ['email' => 'fahria@zbk.com'],
+            [
+                'name' => 'Fahria',
+                'password' => bcrypt('password'),
+                'role' => 'admin'
+            ]
+        );
+
+         User::updateOrCreate(
+            ['email' => 'marlina@zbk.com'],
+            [
+                'name' => 'Marlina',
+                'password' => bcrypt('password'),
+                'role' => 'admin'
+            ]
+        );
+
+        
 
         $this->call([
             VariantAttributeSeeder::class,
