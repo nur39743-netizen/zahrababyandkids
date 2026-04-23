@@ -68,9 +68,28 @@
                         <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
                             Stok <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
                         </span>
-                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
-                            {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
+                        @if($prod->gender === 'male')
+                        <span class="text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200/80 px-2 py-0.5 rounded-md" title="Laki-laki">L</span>
+                        @elseif($prod->gender === 'female')
+                        <span class="text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200/80 px-2 py-0.5 rounded-md" title="Perempuan">P</span>
+                        @else
+                        <span class="text-[10px] font-bold bg-violet-100 text-violet-800 border border-violet-200/80 px-2 py-0.5 rounded-md" title="Unisex">U</span>
+                        @endif
+                        @php
+                            $minJual = $prod->items_min_harga_jual;
+                            $maxJual = $prod->items_max_harga_jual;
+                        @endphp
+                        @if($minJual !== null && $maxJual !== null)
+                        <span class="text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md whitespace-nowrap" title="Harga jual (ecer)">
+                            @if((float) $minJual === (float) $maxJual)
+                            Rp {{ number_format((float) $minJual, 0, ',', '.') }}
+                            @else
+                            Rp {{ number_format((float) $minJual, 0, ',', '.') }}–{{ number_format((float) $maxJual, 0, ',', '.') }}
+                            @endif
                         </span>
+                        @else
+                        <span class="text-[10px] text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">Harga —</span>
+                        @endif
                     </div>
                 </div>
             </div>

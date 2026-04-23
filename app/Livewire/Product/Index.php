@@ -50,6 +50,8 @@ class Index extends Component
     {
         $products = Product::with(['category', 'owner', 'supplier'])
             ->withSum('items', 'stok_akhir')
+            ->withMin('items', 'harga_jual')
+            ->withMax('items', 'harga_jual')
             ->when($this->search, function($query) {
                 $query->where(function($q) {
                     $q->where('nama_produk', 'like', '%'.$this->search.'%')
