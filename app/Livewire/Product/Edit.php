@@ -10,6 +10,9 @@ use App\Models\Product;
 use App\Models\ProductItem;
 use App\Models\VariantAttribute;
 use App\Models\VariantOption;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Edit extends Component
 {
@@ -145,10 +148,10 @@ class Edit extends Component
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
         ]);
-
+        
         $fotoPath = $this->product->foto;
-        if ($this->foto && is_object($this->foto)) {
-            $fotoPath = $this->foto->store('products', 'public');
+        if ($this->foto instanceof TemporaryUploadedFile) {
+            $fotoPath = $this->storeImageAsWebp($this->foto, 'products');
         }
 
         $this->product->update([
@@ -162,14 +165,20 @@ class Edit extends Component
         ]);
 
         foreach ($this->items as $index => $data) {
-            $fotoPath = isset($this->item_fotos[$index]) && is_object($this->item_fotos[$index]) ? $this->item_fotos[$index]->store('product_items', 'public') : (isset($this->item_fotos[$index]) ? $this->item_fotos[$index] : null);
+            $fotoPath = null;
+            if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] instanceof TemporaryUploadedFile) {
+                $fotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
+            } elseif (isset($this->item_fotos[$index])) {
+                $fotoPath = $this->item_fotos[$index];
+            }
+
             if (is_numeric($data['id'])) {
                 // Update existing
                 ProductItem::where('id', $data['id'])->update([
                     'harga_modal' => $data['modal'],
-                    'harga_sell'  => $data['sell'],
-                    'harga_jual'  => $data['jual'],
-                    'stok_akhir'  => $data['stok'],
+                    'harga_sell' => $data['sell'],
+                    'harga_jual' => $data['jual'],
+                    'stok_akhir' => $data['stok'],
                     'foto' => $fotoPath,
                 ]);
             } else {
@@ -189,15 +198,46 @@ class Edit extends Component
                     'variant_option_1_id' => $variant1Id,
                     'variant_option_2_id' => $variant2Id,
                     'harga_modal' => $data['modal'],
-                    'harga_sell'  => $data['sell'],
-                    'harga_jual'  => $data['jual'],
-                    'stok_akhir'  => $data['stok'],
+                    'harga_sell' => $data['sell'],
+                    'harga_jual' => $data['jual'],
+                    'stok_akhir' => $data['stok'],
                     'foto' => $fotoPath,
                 ]);
             }
         }
 
         return redirect()->to('/products/' . $this->product->id);
+    }
+
+    private function storeImageAsWebp(TemporaryUploadedFile $file, string $folder): string
+    {
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+            throw new \RuntimeException('GD extension with WebP support is not available.');
+        }
+
+        $binary = file_get_contents($file->getRealPath());
+        if ($binary === false) {
+            throw new \RuntimeException('Failed to read uploaded image file.');
+        }
+
+        $image = imagecreatefromstring($binary);
+        if ($image === false) {
+            throw new \RuntimeException('Invalid image file.');
+        }
+
+        $filename = $folder . '/' . Str::random(40) . '.webp';
+        ob_start();
+        imagewebp($image, null, 80);
+        $webpBinary = ob_get_clean();
+        imagedestroy($image);
+
+        if ($webpBinary === false) {
+            throw new \RuntimeException('Failed to encode image as WebP.');
+        }
+
+        Storage::disk('public')->put($filename, $webpBinary);
+
+        return $filename;
     }
 
     public function render()

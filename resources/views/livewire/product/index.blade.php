@@ -26,11 +26,19 @@
 
     <div class="space-y-4">
         @foreach($products as $prod)
-        <a href="/products/{{ $prod->id }}" class="block bg-white p-4 rounded-xl shadow-sm border border-pink-50 relative hover:shadow-md transition">
-            <div class="flex items-start gap-4">
-                <div class="flex-shrink-0">
+        <div class="block bg-white p-4 rounded-xl shadow-sm border border-pink-50 relative hover:shadow-md transition">
+            <a href="/products/{{ $prod->id }}" class="absolute inset-0 z-0 rounded-xl" aria-label="Lihat detail {{ $prod->nama_produk }}"></a>
+            <div class="flex items-start gap-4 relative z-10 pointer-events-none">
+                <div class="flex-shrink-0 pointer-events-auto">
                     @if($prod->foto)
-                    <img src="{{ asset('storage/' . $prod->foto) }}" alt="{{ $prod->nama_produk }}" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
+                    <button
+                        type="button"
+                        class="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                        wire:click.stop="openPreview({{ $prod->id }})"
+                        aria-label="Preview foto {{ $prod->nama_produk }}"
+                    >
+                        <img src="{{ asset('storage/' . $prod->foto) }}" alt="" class="w-full h-full object-cover pointer-events-none">
+                    </button>
                     @else
                     <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +65,7 @@
                     <div class="mt-3 flex justify-between items-center text-xs">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                                Total Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
+                                Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
                             </span>
                             <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
                                 {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
@@ -73,11 +81,10 @@
                             </span>
                             @endif
                         </div>
-                        <span class="text-pink-500 font-medium hover:underline">Lihat Detail & Varian &rarr;</span>
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
         @endforeach
 
         @if($products->isEmpty())
@@ -93,4 +100,27 @@
         </div>
         @endif
     </div>
+
+    @if($previewUrl)
+    <!-- Preview foto produk (klik thumbnail) — Livewire, tanpa Alpine -->
+    <div
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Preview foto produk"
+        wire:click="closePreview"
+        wire:key="product-photo-preview"
+    >
+        <div class="absolute inset-0 bg-black/70" aria-hidden="true"></div>
+        <div class="relative max-w-full max-h-[90vh] inline-block" wire:click.stop>
+            <button
+                type="button"
+                class="absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full bg-white text-gray-700 shadow-lg border border-gray-200 flex items-center justify-center text-xl font-light leading-none hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                wire:click="closePreview"
+                aria-label="Tutup preview"
+            >&times;</button>
+            <img src="{{ $previewUrl }}" alt="{{ $previewAlt }}" class="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-lg shadow-2xl border border-white/20">
+        </div>
+    </div>
+    @endif
 </div>

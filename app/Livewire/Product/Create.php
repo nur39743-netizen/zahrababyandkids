@@ -12,6 +12,8 @@ use App\Models\VariantAttribute;
 use App\Models\VariantOption;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Create extends Component
 {
@@ -42,6 +44,7 @@ class Create extends Component
 
     public $matrix = [];
     public $item_fotos = []; // Array of uploaded files for each matrix item
+
     // Bulk price target
     public $bulk_modal = 0;
     public $bulk_sell = 0;
@@ -87,7 +90,9 @@ class Create extends Component
     public function generateMatrix()
     {
         $this->matrix = [];
-        if (!$this->has_variant) return;
+        if (!$this->has_variant) {
+            return;
+        }
 
         $opts1 = array_keys(array_filter($this->variant1_options));
         $opts2 = array_keys(array_filter($this->variant2_options));
@@ -106,7 +111,7 @@ class Create extends Component
                         'modal' => 0,
                         'sell' => 0,
                         'jual' => 0,
-                        'stok' => 0
+                        'stok' => 0,
                     ];
                 }
             }
@@ -120,7 +125,7 @@ class Create extends Component
                     'modal' => 0,
                     'sell' => 0,
                     'jual' => 0,
-                    'stok' => 0
+                    'stok' => 0,
                 ];
             }
         }
@@ -137,9 +142,10 @@ class Create extends Component
 
         DB::beginTransaction();
         try {
-            $fotoPath = null;
-            if ($this->foto) {
-                $fotoPath = $this->foto->store('products', 'public');
+            $productFotoPath = null;
+
+            if ($this->foto instanceof TemporaryUploadedFile) {
+                $productFotoPath = $this->storeImageAsWebp($this->foto, 'products');
             }
 
             $product = Product::create([
@@ -151,12 +157,16 @@ class Create extends Component
                 'supplier_id' => $this->supplier_id ?: null,
                 'gender' => $this->gender,
                 'bahan' => $this->bahan ?: null,
-                'foto' => $fotoPath,
+                'foto' => $productFotoPath,
             ]);
 
             if ($this->has_variant && count($this->matrix) > 0) {
                 foreach ($this->matrix as $index => $m) {
-                    $fotoPath = isset($this->item_fotos[$index]) ? $this->item_fotos[$index]->store('product_items', 'public') : null;
+                    $itemFotoPath = null;
+                    if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] instanceof TemporaryUploadedFile) {
+                        $itemFotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
+                    }
+
                     ProductItem::create([
                         'product_id' => $product->id,
                         'variant_option_1_id' => $m['v1_id'] ?: null,
@@ -165,23 +175,27 @@ class Create extends Component
                         'harga_sell' => $m['sell'],
                         'harga_jual' => $m['jual'],
                         'stok_akhir' => $m['stok'],
-                        'foto' => $fotoPath,
+                        'foto' => $itemFotoPath,
                     ]);
                 }
             } else {
-                $fotoPath = isset($this->item_fotos[0]) ? $this->item_fotos[0]->store('product_items', 'public') : null;
+                $itemFotoPath = null;
+                if (isset($this->item_fotos[0]) && $this->item_fotos[0] instanceof TemporaryUploadedFile) {
+                    $itemFotoPath = $this->storeImageAsWebp($this->item_fotos[0], 'product_items');
+                }
+
                 ProductItem::create([
                     'product_id' => $product->id,
                     'harga_modal' => $this->harga_modal,
                     'harga_sell' => $this->harga_sell,
                     'harga_jual' => $this->harga_jual,
                     'stok_akhir' => $this->stok_akhir,
-                    'foto' => $fotoPath,
+                    'foto' => $itemFotoPath,
                 ]);
             }
+
             DB::commit();
 
-            // update counter
             if ($product->category_id) {
                 $cat = Category::find($product->category_id);
                 $cat->total_produk = Product::where('category_id', $cat->id)->count();
@@ -195,13 +209,44 @@ class Create extends Component
         }
     }
 
+    private function storeImageAsWebp(TemporaryUploadedFile $file, string $folder): string
+    {
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+            throw new \RuntimeException('GD extension with WebP support is not available.');
+        }
+
+        $binary = file_get_contents($file->getRealPath());
+        if ($binary === false) {
+            throw new \RuntimeException('Failed to read uploaded image file.');
+        }
+
+        $image = imagecreatefromstring($binary);
+        if ($image === false) {
+            throw new \RuntimeException('Invalid image file.');
+        }
+
+        $filename = $folder . '/' . Str::random(40) . '.webp';
+        ob_start();
+        imagewebp($image, null, 80);
+        $webpBinary = ob_get_clean();
+        imagedestroy($image);
+
+        if ($webpBinary === false) {
+            throw new \RuntimeException('Failed to encode image as WebP.');
+        }
+
+        Storage::disk('public')->put($filename, $webpBinary);
+
+        return $filename;
+    }
+
     public function render()
     {
         return view('livewire.product.create', [
             'categories' => Category::all(),
             'owners' => Owner::all(),
             'suppliers' => \App\Models\Supplier::orderBy('name')->get(),
-            'variant_attributes' => VariantAttribute::with('options')->get()
+            'variant_attributes' => VariantAttribute::with('options')->get(),
         ])->layout('layouts.app');
     }
 }

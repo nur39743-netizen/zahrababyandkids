@@ -14,6 +14,10 @@ class Index extends Component
     public $search = '';
     public $selectedOwner = ''; // '' = semua, 'milik_sendiri' = toko, int = ID konsinyasi
 
+    public ?string $previewUrl = null;
+
+    public string $previewAlt = '';
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -23,6 +27,23 @@ class Index extends Component
     {
         $this->selectedOwner = $value;
         $this->resetPage();
+    }
+
+    public function openPreview(int $productId): void
+    {
+        $product = Product::query()->find($productId);
+        if (! $product || ! $product->foto) {
+            return;
+        }
+
+        $this->previewUrl = asset('storage/' . $product->foto);
+        $this->previewAlt = $product->nama_produk;
+    }
+
+    public function closePreview(): void
+    {
+        $this->previewUrl = null;
+        $this->previewAlt = '';
     }
 
     public function render()
