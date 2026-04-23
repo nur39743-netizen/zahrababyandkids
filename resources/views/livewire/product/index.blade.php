@@ -50,11 +50,15 @@
                     <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-semibold text-gray-900 text-sm sm:text-base leading-snug line-clamp-2 pr-1">{{ $prod->nama_produk }}</h3>
-                            <p class="text-[11px] text-gray-500 mt-0.5 truncate">
-                                {{ $prod->category->nama_kategori ?? 'Tanpa kategori' }}
-                                @if($prod->bahan)
-                                <span class="text-gray-300 shrink-0 px-0.5" aria-hidden="true">·</span>{{ $prod->bahan }}
-                                @endif
+                            <p class="text-[11px] mt-0.5 flex items-center gap-1.5 min-w-0">
+                                <span class="shrink-0 inline-flex items-center font-mono text-[10px] sm:text-[11px] font-bold tracking-wide text-pink-700 bg-pink-50 border border-pink-100 px-1.5 py-0.5 rounded-md">{{ $prod->kode_produk ?? '—' }}</span>
+                                <span class="text-gray-300 shrink-0" aria-hidden="true">·</span>
+                                <span class="min-w-0 truncate text-gray-500">
+                                    {{ $prod->category->nama_kategori ?? 'Tanpa kategori' }}
+                                    @if($prod->bahan)
+                                    <span class="text-gray-300 shrink-0 px-0.5" aria-hidden="true">·</span>{{ $prod->bahan }}
+                                    @endif
+                                </span>
                             </p>
                         </div>
                         @if($prod->owner)
@@ -64,7 +68,6 @@
                         @endif
                     </div>
                     <div class="flex flex-wrap items-center gap-1.5">
-                        <span class="inline-flex items-center font-mono text-[10px] sm:text-[11px] font-bold tracking-wide text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">{{ $prod->kode_produk ?? '—' }}</span>
                         <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
                             Stok <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
                         </span>
