@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductItem;
 use App\Models\VariantAttribute;
 use App\Models\VariantOption;
+use App\Services\ProductCodeService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -148,10 +149,15 @@ class Create extends Component
                 $productFotoPath = $this->storeImageAsWebp($this->foto, 'products');
             }
 
+            $category = Category::find($this->category_id);
+            $kodeProduk = $category
+                ? ProductCodeService::nextCodeForCategory($category)
+                : ('PRD' . date('ym') . strtoupper(Str::random(4)));
+
             $product = Product::create([
                 'nama_produk' => $this->nama_produk,
                 'slug' => Str::slug($this->nama_produk . '-' . rand(100, 999)),
-                'kode_produk' => 'PRD' . date('ym') . strtoupper(Str::random(4)),
+                'kode_produk' => $kodeProduk,
                 'category_id' => $this->category_id ?: null,
                 'owner_id' => $this->owner_id ?: null,
                 'supplier_id' => $this->supplier_id ?: null,

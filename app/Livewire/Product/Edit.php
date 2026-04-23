@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductItem;
 use App\Models\VariantAttribute;
 use App\Models\VariantOption;
+use App\Services\ProductCodeService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -154,7 +155,8 @@ class Edit extends Component
             $fotoPath = $this->storeImageAsWebp($this->foto, 'products');
         }
 
-        $this->product->update([
+        $categoryChanged = (string) ($this->category_id ?: '') !== (string) ($this->product->category_id ?: '');
+        $payload = [
             'nama_produk' => $this->nama_produk,
             'category_id' => $this->category_id ?: null,
             'owner_id' => $this->owner_id ?: null,
@@ -162,7 +164,16 @@ class Edit extends Component
             'gender' => $this->gender,
             'bahan' => $this->bahan ?: null,
             'foto' => $fotoPath,
-        ]);
+        ];
+
+        if ($categoryChanged && $this->category_id) {
+            $cat = Category::find($this->category_id);
+            if ($cat) {
+                $payload['kode_produk'] = ProductCodeService::nextCodeForCategory($cat);
+            }
+        }
+
+        $this->product->update($payload);
 
         foreach ($this->items as $index => $data) {
             $fotoPath = null;

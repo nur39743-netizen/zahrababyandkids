@@ -1,98 +1,89 @@
 <div>
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-pink-700">Daftar Produk</h2>
-        <div class="flex gap-2">
-            <a href="/products/trashed" class="bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-100 hover:bg-gray-100 transition">
+    <div class="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-pink-700">Daftar Produk</h2>
+        <div class="flex gap-2 shrink-0">
+            <a href="/products/trashed" class="bg-gray-50 text-gray-600 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold border border-gray-100 hover:bg-gray-100 transition">
                 Terhapus
             </a>
-            <a href="/products/create" class="bg-gradient-to-r from-pink-500 to-rose-400 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow hover:shadow-lg transition">
+            <a href="/products/create" class="bg-gradient-to-r from-pink-500 to-rose-400 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold shadow hover:shadow-lg transition">
                 + Tambah
             </a>
         </div>
     </div>
 
-    <div class="mb-4">
-        <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari nama, kode, atau owner..." class="w-full rounded-xl border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-4 py-3 border shadow-sm">
+    <div class="mb-3">
+        <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari nama, kode, atau owner..." class="w-full rounded-xl border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2.5 sm:px-4 sm:py-3 border shadow-sm">
     </div>
 
-    <!-- Scrollable Filter Chips -->
-    <div class="flex overflow-x-auto gap-2 pb-2 mb-4 scrollbar-hide">
-        <button wire:click="selectOwner('')" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition {{ $selectedOwner === '' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Semua</button>
-        <button wire:click="selectOwner('milik_sendiri')" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition {{ $selectedOwner === 'milik_sendiri' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Milik Sendiri</button>
+    <div class="flex overflow-x-auto gap-2 pb-2 mb-3 scrollbar-hide -mx-1 px-1">
+        <button wire:click="selectOwner('')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner === '' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Semua</button>
+        <button wire:click="selectOwner('milik_sendiri')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner === 'milik_sendiri' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Milik Sendiri</button>
         @foreach($owners as $own)
-        <button wire:click="selectOwner('{{ $own->id }}')" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition {{ $selectedOwner == $own->id ? 'bg-pink-500 text-white' : 'bg-yellow-50 text-yellow-700 border border-yellow-100 hover:bg-yellow-100' }}">{{ $own->nama_owner }}</button>
+        <button wire:click="selectOwner('{{ $own->id }}')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner == $own->id ? 'bg-pink-500 text-white' : 'bg-yellow-50 text-yellow-800 border border-yellow-100 hover:bg-yellow-100' }}">{{ $own->nama_owner }}</button>
         @endforeach
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-2.5 sm:space-y-3">
         @foreach($products as $prod)
-        <div class="block bg-white p-4 rounded-xl shadow-sm border border-pink-50 relative hover:shadow-md transition">
-            <a href="/products/{{ $prod->id }}" class="absolute inset-0 z-0 rounded-xl" aria-label="Lihat detail {{ $prod->nama_produk }}"></a>
-            <div class="flex items-start gap-4 relative z-10 pointer-events-none">
-                <div class="flex-shrink-0 pointer-events-auto">
+        <article class="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-pink-100/80 transition overflow-hidden">
+            <a href="/products/{{ $prod->id }}" class="absolute inset-0 z-0 rounded-2xl" aria-label="Lihat detail {{ $prod->nama_produk }}"></a>
+            <div class="flex gap-3 p-3 sm:p-3.5 relative z-10 pointer-events-none">
+                <div class="shrink-0 pointer-events-auto">
                     @if($prod->foto)
                     <button
                         type="button"
-                        class="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                        class="w-[4.5rem] h-[4.5rem] sm:w-16 sm:h-16 rounded-xl border border-gray-100 overflow-hidden bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-1 shadow-inner"
                         wire:click.stop="openPreview({{ $prod->id }})"
                         aria-label="Preview foto {{ $prod->nama_produk }}"
                     >
                         <img src="{{ asset('storage/' . $prod->foto) }}" alt="" class="w-full h-full object-cover pointer-events-none">
                     </button>
                     @else
-                    <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    <div class="w-[4.5rem] h-[4.5rem] sm:w-16 sm:h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-100 flex items-center justify-center">
+                        <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                     </div>
                     @endif
                 </div>
-                <div class="flex-1">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-lg leading-tight">{{ $prod->nama_produk }}</h3>
-                            <p class="text-xs text-gray-400 mt-1">Kode: {{ $prod->kode_produk ?? '-' }}
-                                @if($prod->category) • {{ $prod->category->nama_kategori }} @endif
-                            </p>
+                <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-semibold text-gray-900 text-sm sm:text-base leading-snug line-clamp-2 pr-1">{{ $prod->nama_produk }}</h3>
+                            <p class="text-[11px] text-gray-500 mt-0.5 truncate">{{ $prod->category->nama_kategori ?? 'Tanpa kategori' }}</p>
                         </div>
                         @if($prod->owner)
-                        <span class="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-1 rounded font-bold border border-yellow-200">{{ $prod->owner->nama_owner }}</span>
+                        <span class="shrink-0 bg-amber-50 text-amber-800 text-[10px] px-2 py-0.5 rounded-md font-bold border border-amber-100/80 max-w-[5.5rem] truncate">{{ $prod->owner->nama_owner }}</span>
                         @else
-                        <span class="bg-pink-100 text-pink-600 text-[10px] px-2 py-1 rounded font-bold border border-pink-200">Milik Sendiri</span>
+                        <span class="shrink-0 bg-pink-50 text-pink-600 text-[10px] px-2 py-0.5 rounded-md font-bold border border-pink-100">Sendiri</span>
                         @endif
                     </div>
-
-                    <div class="mt-3 flex justify-between items-center text-xs">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                                Stok: <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
-                            </span>
-                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                                {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
-                            </span>
-                            @if($prod->bahan)
-                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                                Bahan: <strong>{{ $prod->bahan }}</strong>
-                            </span>
-                            @endif
-                            @if($prod->supplier)
-                            <span class="text-gray-500 border border-gray-100 bg-gray-50 px-2 py-1 rounded">
-                                Supplier: <strong>{{ $prod->supplier->name }}</strong>
-                            </span>
-                            @endif
-                        </div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="inline-flex items-center font-mono text-[10px] sm:text-[11px] font-bold tracking-wide text-pink-700 bg-pink-50 border border-pink-100 px-2 py-0.5 rounded-md">{{ $prod->kode_produk ?? '—' }}</span>
+                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
+                            Stok <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
+                        </span>
+                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
+                            {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
+                        </span>
+                        @if($prod->bahan)
+                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md truncate max-w-full">{{ $prod->bahan }}</span>
+                        @endif
+                        @if($prod->supplier)
+                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md truncate max-w-[10rem]" title="{{ $prod->supplier->name }}">{{ $prod->supplier->name }}</span>
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
         @endforeach
 
         @if($products->isEmpty())
-        <div class="text-center text-gray-400 py-10 bg-white rounded-xl shadow-sm border border-pink-50">
+        <div class="text-center text-gray-400 py-10 px-4 bg-white rounded-2xl shadow-sm border border-pink-50">
             <svg class="w-12 h-12 mx-auto text-pink-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
             </svg>
-            <p>Belum ada produk atau data tidak ditemukan.</p>
+            <p class="text-sm">Belum ada produk atau data tidak ditemukan.</p>
         </div>
         @else
         <div class="mt-4">
@@ -102,7 +93,6 @@
     </div>
 
     @if($previewUrl)
-    <!-- Preview foto produk (klik thumbnail) — Livewire, tanpa Alpine -->
     <div
         class="fixed inset-0 z-[100] flex items-center justify-center p-4"
         role="dialog"

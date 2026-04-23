@@ -48,7 +48,7 @@ class Index extends Component
 
     public function render()
     {
-        $products = Product::with(['category', 'owner'])
+        $products = Product::with(['category', 'owner', 'supplier'])
             ->withSum('items', 'stok_akhir')
             ->when($this->search, function($query) {
                 $query->where(function($q) {
