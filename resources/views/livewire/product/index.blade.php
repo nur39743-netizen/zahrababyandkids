@@ -50,7 +50,12 @@
                     <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-semibold text-gray-900 text-sm sm:text-base leading-snug line-clamp-2 pr-1">{{ $prod->nama_produk }}</h3>
-                            <p class="text-[11px] text-gray-500 mt-0.5 truncate">{{ $prod->category->nama_kategori ?? 'Tanpa kategori' }}</p>
+                            <p class="text-[11px] text-gray-500 mt-0.5 truncate">
+                                {{ $prod->category->nama_kategori ?? 'Tanpa kategori' }}
+                                @if($prod->bahan)
+                                <span class="text-gray-300 shrink-0 px-0.5" aria-hidden="true">·</span>{{ $prod->bahan }}
+                                @endif
+                            </p>
                         </div>
                         @if($prod->owner)
                         <span class="shrink-0 bg-amber-50 text-amber-800 text-[10px] px-2 py-0.5 rounded-md font-bold border border-amber-100/80 max-w-[5.5rem] truncate">{{ $prod->owner->nama_owner }}</span>
@@ -66,12 +71,6 @@
                         <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
                             {{ $prod->gender === 'male' ? 'Male' : ($prod->gender === 'female' ? 'Female' : 'Unisex') }}
                         </span>
-                        @if($prod->bahan)
-                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md truncate max-w-full">{{ $prod->bahan }}</span>
-                        @endif
-                        @if($prod->supplier)
-                        <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md truncate max-w-[10rem]" title="{{ $prod->supplier->name }}">{{ $prod->supplier->name }}</span>
-                        @endif
                     </div>
                 </div>
             </div>
