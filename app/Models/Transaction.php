@@ -9,6 +9,10 @@ class Transaction extends Model
 {
     use SoftDeletes;
 
+    public const STATUS_PEMBAYARAN_LUNAS = 'lunas';
+
+    public const STATUS_PEMBAYARAN_BELUM = 'belum_lunas';
+
     protected $guarded = [];
     protected $casts = [
         'transaction_date' => 'date',

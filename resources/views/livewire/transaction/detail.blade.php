@@ -49,6 +49,11 @@
                 <p class="text-[10px] text-gray-400 font-bold">Metode Bayar / Status</p>
                 <p class="font-bold text-xs text-green-600 mt-1 uppercase">{{ $transaction->payment_method }}</p>
                 <p class="text-[10px] font-bold text-gray-500 mt-0.5">{{ $transaction->status }}</p>
+                @if(($transaction->status_pembayaran ?? 'lunas') === 'lunas')
+                <p class="text-[10px] font-bold text-emerald-600 mt-1">Pembayaran: sudah lunas</p>
+                @else
+                <p class="text-[10px] font-bold text-amber-700 mt-1">Pembayaran: belum lunas (piutang)</p>
+                @endif
             </div>
         </div>
 

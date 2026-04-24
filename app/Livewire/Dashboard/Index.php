@@ -40,15 +40,20 @@ class Index extends Component
         $totalTransaksiBulanIni = $trxBulanIni->count();
         $omsetBulanIni = $trxBulanIni->sum('total_netto');
 
-        // Laba Bersih Bulan Ini
-        $labaKotorItemsBulanIni = TransactionItem::whereHas('transaction', function($q) use ($thisMonth, $thisYear) {
-                                      $q->whereMonth('created_at', $thisMonth)
-                                        ->whereYear('created_at', $thisYear);
-                                  })->get()->sum(function($item) {
-                                      return ($item->harga_jual_history - $item->harga_modal_history) * $item->qty;
-                                  });
+        // Laba bersih: hanya transaksi lunas & tidak dibatalkan (omset tetap semua trx bulan tersebut)
+        $labaKotorItemsBulanIni = TransactionItem::whereHas('transaction', function ($q) use ($thisMonth, $thisYear) {
+            $q->whereMonth('created_at', $thisMonth)
+                ->whereYear('created_at', $thisYear)
+                ->where('status_pembayaran', Transaction::STATUS_PEMBAYARAN_LUNAS)
+                ->where('status', '!=', 'Dibatalkan');
+        })->get()->sum(function ($item) {
+            return ($item->harga_jual_history - $item->harga_modal_history) * $item->qty;
+        });
                                   
-        $diskonGlobalBulanIni = (clone $trxBulanIni)->sum('total_diskon');
+        $diskonGlobalBulanIni = (clone $trxBulanIni)
+            ->where('status_pembayaran', Transaction::STATUS_PEMBAYARAN_LUNAS)
+            ->where('status', '!=', 'Dibatalkan')
+            ->sum('total_diskon');
         $labaBersihBulanIni = $labaKotorItemsBulanIni - $diskonGlobalBulanIni;
 
         return view('livewire.dashboard.index', [

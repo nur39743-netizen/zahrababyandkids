@@ -3,6 +3,14 @@
         <div>
             <h2 class="text-xl font-bold text-pink-700">Edit Transaksi</h2>
             <p class="text-sm text-gray-500">No. Invoice {{ $transaction->no_invoice }}</p>
+            <div class="mt-2 flex flex-wrap gap-2 items-center">
+                @if(($status_pembayaran ?? 'lunas') === 'lunas')
+                <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">Sudah lunas</span>
+                @else
+                <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-100">Belum lunas</span>
+                @endif
+                <span class="text-[10px] text-gray-400">Ubah di form di bawah jika pembayaran sudah diselesaikan.</span>
+            </div>
         </div>
         <a href="/transactions/{{ $transaction->id }}" class="text-gray-500 hover:text-pink-600 text-sm font-semibold">Batal</a>
     </div>
@@ -37,6 +45,16 @@
                     @endforeach
                 </select>
                 @error('payment_method') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Status pembayaran</label>
+                <select wire:model="status_pembayaran" class="w-full rounded-lg border-gray-200 text-sm px-3 py-2">
+                    @foreach($statusPembayaranOptions as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+                <p class="text-[11px] text-gray-400 mt-1">Transaksi belum lunas tidak masuk perhitungan laba bersih di dashboard.</p>
+                @error('status_pembayaran') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-500 mb-1">Tanggal Transaksi</label>

@@ -165,6 +165,15 @@
                 </div>
             </div>
 
+            <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-gray-500">Status pembayaran</label>
+                <select wire:model="status_pembayaran" class="text-[11px] rounded w-full border-gray-200 px-2 py-1.5 focus:border-pink-500">
+                    <option value="lunas">Sudah lunas</option>
+                    <option value="belum_lunas">Belum lunas (piutang / cicilan)</option>
+                </select>
+                <p class="text-[9px] text-gray-400 leading-snug">Laba di dashboard hanya menghitung transaksi yang sudah lunas.</p>
+            </div>
+
 
 
             <!-- Ongkir & Packing Fix -->

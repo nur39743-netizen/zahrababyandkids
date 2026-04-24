@@ -37,6 +37,8 @@ class Index extends Component
 
     // Payment Info
     public $payment_method = 'Cash'; // Cash, Transfer BCA, Transfer BRI, Transfer Mandiri
+    /** @var string lunas|belum_lunas */
+    public $status_pembayaran = Transaction::STATUS_PEMBAYARAN_LUNAS;
     public $status_ongkir = 'Customer'; // Admin/Customer
     public $status_packing = 'Customer'; // Admin/Customer
     public $transaksi_catatan = '';
@@ -224,6 +226,9 @@ class Index extends Component
                 'status_packing' => $this->status_packing,
                 'total_netto' => $this->totalNetto,
                 'payment_method' => $this->payment_method,
+                'status_pembayaran' => $this->status_pembayaran === Transaction::STATUS_PEMBAYARAN_BELUM
+                    ? Transaction::STATUS_PEMBAYARAN_BELUM
+                    : Transaction::STATUS_PEMBAYARAN_LUNAS,
                 'catatan' => $this->transaksi_catatan,
                 'status' => 'Selesai'
             ]);

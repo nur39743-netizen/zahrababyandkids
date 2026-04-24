@@ -126,6 +126,7 @@
             <div>
                 <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Est Laba Bersih</p>
                 <p class="text-sm font-bold tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-emerald-500">Rp{{ number_format($labaBersihBulanIni, 0, ',', '.') }}</p>
+                <p class="text-[8px] text-gray-400 mt-1 leading-tight">Dari transaksi <span class="font-semibold text-gray-500">sudah lunas</span>, tidak termasuk dibatalkan.</p>
             </div>
         </div>
 

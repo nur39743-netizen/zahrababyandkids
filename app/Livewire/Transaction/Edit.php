@@ -15,6 +15,8 @@ class Edit extends Component
     public Transaction $transaction;
     public $customer_id;
     public $payment_method;
+    /** @var string lunas|belum_lunas */
+    public $status_pembayaran;
     public $transaction_date;
     public $status_ongkir;
     public $status_packing;
@@ -45,6 +47,8 @@ class Edit extends Component
         $this->transaction = $transaction;
         $this->customer_id = $transaction->customer_id;
         $this->payment_method = $transaction->payment_method;
+        $this->status_pembayaran = $transaction->status_pembayaran
+            ?? Transaction::STATUS_PEMBAYARAN_LUNAS;
         $this->transaction_date = optional($transaction->transaction_date)->toDateString() ?: optional($transaction->created_at)->toDateString();
         $this->status_ongkir = $transaction->status_ongkir;
         $this->status_packing = $transaction->status_packing;
@@ -232,6 +236,7 @@ class Edit extends Component
     {
         $this->validate([
             'payment_method' => 'required|string',
+            'status_pembayaran' => 'required|in:' . Transaction::STATUS_PEMBAYARAN_LUNAS . ',' . Transaction::STATUS_PEMBAYARAN_BELUM,
             'transaction_date' => 'required|date',
             'status_ongkir' => 'required|string',
             'status_packing' => 'required|string',
@@ -244,6 +249,7 @@ class Edit extends Component
             $this->transaction->update([
                 'customer_id' => $this->customer_id ?: null,
                 'payment_method' => $this->payment_method,
+                'status_pembayaran' => $this->status_pembayaran,
                 'transaction_date' => $this->transaction_date,
                 'status_ongkir' => $this->status_ongkir,
                 'status_packing' => $this->status_packing,
@@ -413,6 +419,10 @@ class Edit extends Component
             'shippingOptions' => ['Customer', 'Admin'],
             'packingOptions' => ['Customer', 'Admin'],
             'statusOptions' => ['Selesai', 'Pending', 'Dibatalkan'],
+            'statusPembayaranOptions' => [
+                Transaction::STATUS_PEMBAYARAN_LUNAS => 'Sudah lunas',
+                Transaction::STATUS_PEMBAYARAN_BELUM => 'Belum lunas (piutang)',
+            ],
             'productItems' => $productItems,
             'products' => $products,
             'editProductItems' => $editProductItems,

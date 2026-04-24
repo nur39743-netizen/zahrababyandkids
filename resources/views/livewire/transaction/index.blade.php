@@ -28,9 +28,16 @@
                         • {{ $trx->created_at->format('H:i') }}
                     </p>
                 </div>
-                <div class="text-right">
+                <div class="text-right space-y-1">
                     <p class="text-sm font-bold text-pink-600">Rp{{ number_format($trx->total_netto, 0, ',', '.') }}</p>
-                    <span class="bg-green-100 text-green-700 font-bold text-[9px] px-2 py-0.5 rounded">{{ $trx->payment_method }}</span>
+                    <div class="flex flex-wrap justify-end gap-1">
+                        <span class="bg-green-100 text-green-700 font-bold text-[9px] px-2 py-0.5 rounded">{{ $trx->payment_method }}</span>
+                        @if(($trx->status_pembayaran ?? 'lunas') === 'lunas')
+                        <span class="bg-emerald-50 text-emerald-700 font-bold text-[9px] px-2 py-0.5 rounded border border-emerald-100">Lunas</span>
+                        @else
+                        <span class="bg-amber-50 text-amber-800 font-bold text-[9px] px-2 py-0.5 rounded border border-amber-100">Belum lunas</span>
+                        @endif
+                    </div>
                 </div>
             </div>
 
