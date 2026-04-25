@@ -30,6 +30,11 @@
                 <p class="text-sm text-gray-500">Kategori: <span class="font-semibold text-gray-700">{{ $product->category ? $product->category->nama_kategori : '-' }}</span></p>
                 <p class="text-sm text-gray-500">Gender: <span class="font-semibold text-gray-700">{{ $product->gender === 'male' ? 'Laki-laki / Male' : ($product->gender === 'female' ? 'Perempuan / Female' : 'Unisex / Netral') }}</span></p>
                 <p class="text-sm text-gray-500">Bahan: <span class="font-semibold text-gray-700">{{ $product->bahan ?: '-' }}</span></p>
+                <p class="text-sm text-gray-500 mt-2">
+                    Terjual (total):
+                    <span class="font-semibold text-sky-700">{{ number_format((int) ($product->total_terjual ?? 0), 0, ',', '.') }}</span>
+                    <span class="text-gray-400 text-xs font-normal">unit</span>
+                </p>
             </div>
             @if($product->owner)
             <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded font-bold border border-yellow-200">Titipan: {{ $product->owner->nama_owner }}</span>
@@ -48,6 +53,7 @@
                             <th class="py-2 px-2 text-right">Modal</th>
                             <th class="py-2 px-2 text-right">Harga Grosir</th>
                             <th class="py-2 px-2 text-right">Harga Retail</th>
+                            <th class="py-2 px-2 text-center">Terjual</th>
                             <th class="py-2 px-2 text-center rounded-tr-lg">Stok</th>
                         </tr>
                     </thead>
@@ -61,6 +67,9 @@
                             <td class="py-3 px-2 text-right text-gray-600">Rp{{ number_format($item->harga_modal,0,',','.') }}</td>
                             <td class="py-3 px-2 text-right text-blue-600 font-medium">Rp{{ number_format($item->harga_sell,0,',','.') }}</td>
                             <td class="py-3 px-2 text-right font-bold text-pink-600">Rp{{ number_format($item->harga_jual,0,',','.') }}</td>
+                            <td class="py-3 px-2 text-center">
+                                <span class="bg-sky-50 text-sky-800 px-2 py-1 rounded border border-sky-100 text-xs font-semibold">{{ (int) ($item->terjual ?? 0) }}</span>
+                            </td>
                             <td class="py-3 px-2 text-center">
                                 <span class="bg-gray-100 px-3 py-1 rounded border border-gray-200 shadow-sm">{{ $item->stok_akhir }}</span>
                             </td>

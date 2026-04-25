@@ -49,6 +49,7 @@ class Index extends Component
     public function render()
     {
         $products = Product::with(['category', 'owner', 'supplier'])
+            ->withTotalTerjual()
             ->withSum('items', 'stok_akhir')
             ->withMin('items', 'harga_jual')
             ->withMax('items', 'harga_jual')

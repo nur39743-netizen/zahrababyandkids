@@ -71,6 +71,9 @@
                         <span class="text-[10px] text-gray-600 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md">
                             Stok <strong class="text-pink-600">{{ $prod->items_sum_stok_akhir ?? 0 }}</strong>
                         </span>
+                        <span class="text-[10px] text-gray-600 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-md" title="Total unit terjual (semua varian)">
+                            Terjual <strong class="text-sky-700">{{ (int) ($prod->total_terjual ?? 0) }}</strong>
+                        </span>
                         @if($prod->gender === 'male')
                         <span class="text-[10px] font-bold bg-sky-100 text-sky-800 border border-sky-200/80 px-2 py-0.5 rounded-md" title="Laki-laki">L</span>
                         @elseif($prod->gender === 'female')
