@@ -87,15 +87,15 @@
                 <div class="col-span-4 text-xs font-bold text-yellow-700 mb-1">Set Harga Seragam (Opsional)</div>
                 <div>
                     <label class="block text-[10px] text-gray-500 mb-1">Modal</label>
-                    <input type="number" wire:model="bulk_modal" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500">
+                    <input type="number" wire:model="bulk_modal" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'">
                 </div>
                 <div>
                     <label class="block text-[10px] text-gray-500 mb-1">Sell</label>
-                    <input type="number" wire:model="bulk_sell" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 text-blue-600">
+                    <input type="number" wire:model="bulk_sell" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 text-blue-600" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'">
                 </div>
                 <div>
                     <label class="block text-[10px] text-gray-500 mb-1">Jual</label>
-                    <input type="number" wire:model="bulk_jual" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 text-pink-600">
+                    <input type="number" wire:model="bulk_jual" class="w-full rounded text-xs px-2 py-1 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 text-pink-600" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'">
                 </div>
                 <div>
                     <button type="button" wire:click="applyBulkPrice" class="w-full bg-yellow-500 text-white text-xs font-bold py-1.5 rounded hover:bg-yellow-600 transition">Terapkan</button>
@@ -137,10 +137,10 @@
                                 @endif
                                 @endif
                             </td>
-                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.modal" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.sell" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-blue-600"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.jual" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-pink-600"></td>
-                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.stok" class="w-14 rounded text-[10px] px-1 py-1 border-gray-300 text-center"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.modal" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.sell" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-blue-600" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.jual" class="w-16 rounded text-[10px] px-1 py-1 border-gray-300 text-pink-600" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+                            <td class="py-2 px-1"><input type="number" wire:model="items.{{$index}}.stok" class="w-14 rounded text-[10px] px-1 py-1 border-gray-300 text-center" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
                             <td class="py-2 px-1">
                                 <button type="button" wire:click="deleteItem({{ $index }})" wire:confirm="Apakah Anda yakin ingin menghapus item ini?" class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600 transition">Hapus</button>
                             </td>
