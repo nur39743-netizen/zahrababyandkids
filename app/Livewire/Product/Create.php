@@ -209,9 +209,10 @@ class Create extends Component
             }
 
             return redirect()->to('/products');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            dd($e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Gagal menyimpan produk: ' . $e->getMessage() . ' di baris ' . $e->getLine());
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
