@@ -68,6 +68,11 @@ Route::middleware('auth')->group(function () {
         return view('pos.print', compact('transaction'));
     });
 
+    Route::get('/pos/nota/{id}', function ($id) {
+        $transaction = Transaction::with(['customer', 'items'])->findOrFail($id);
+        return view('pos.nota', compact('transaction'));
+    });
+
     Route::get('/products', ProductIndex::class);
     Route::get('/products/create', ProductCreate::class);
     Route::get('/products/trashed', ProductTrashed::class);

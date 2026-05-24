@@ -47,6 +47,9 @@
                 </div>
                 <div class="flex space-x-2">
                     <a href="/transactions/{{ $trx->id }}" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-bold hover:bg-blue-100 transition">Detail</a>
+                    <a href="/pos/nota/{{ $trx->id }}" target="_blank" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-100 transition flex items-center">
+                        📄 Nota
+                    </a>
                     <a href="/pos/print/{{ $trx->id }}" target="_blank" class="bg-pink-50 text-pink-600 px-3 py-1.5 rounded-lg font-bold hover:bg-pink-100 transition flex items-center">
                         🖨️ Cetak
                     </a>

@@ -18,10 +18,10 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
-    
+
     // Cart state
     public $cart = [];
-    
+
     // Global discount & costs
     public $global_discount = 0;
     public $biaya_ongkir = 0;
@@ -56,24 +56,24 @@ class Index extends Component
 
     public function addToCart($product_item_id)
     {
-        $item = ProductItem::with(['product', 'variantOption1', 'variantOption2'])->find($product_item_id);
-        
-        if(!$item || $item->stok_akhir < 1) {
+        $item = ProductItem::with(['product.owner', 'variantOption1', 'variantOption2'])->find($product_item_id);
+
+        if (!$item || $item->stok_akhir < 1) {
             $this->addError('cart', 'Stok produk tidak mencukupi.');
             return;
         }
 
         $variantName = 'Standard';
-        if($item->variantOption1 || $item->variantOption2) {
-            $variantName = ($item->variantOption1 ? $item->variantOption1->value : '') . 
-                           ($item->variantOption2 ? ' / ' . $item->variantOption2->value : '');
+        if ($item->variantOption1 || $item->variantOption2) {
+            $variantName = ($item->variantOption1 ? $item->variantOption1->value : '') .
+                ($item->variantOption2 ? ' / ' . $item->variantOption2->value : '');
         }
 
         // Check if already in cart
         $exists = false;
-        foreach($this->cart as $k => $c) {
-            if($c['id'] == $item->id) {
-                if($c['qty'] + 1 > $item->stok_akhir) {
+        foreach ($this->cart as $k => $c) {
+            if ($c['id'] == $item->id) {
+                if ($c['qty'] + 1 > $item->stok_akhir) {
                     $this->addError('cart', 'Maksimal stok tercapai untuk ' . $c['nama']);
                     return;
                 }
@@ -83,11 +83,13 @@ class Index extends Component
             }
         }
 
-        if(!$exists) {
+        if (!$exists) {
             $this->cart[] = [
                 'id' => $item->id,
                 'nama' => $item->product->nama_produk,
                 'varian' => trim($variantName, ' /'),
+                'gender' => $item->product->gender ?? 'unisex',
+                'owner' => $item->product->owner?->nama_owner ?? '-',
                 'stok' => $item->stok_akhir,
                 'harga_modal' => $item->harga_modal,
                 'harga_jual' => $item->harga_jual,
@@ -101,15 +103,15 @@ class Index extends Component
 
     public function updateQty($index, $action)
     {
-        if($action === 'plus') {
-            if($this->cart[$index]['qty'] + 1 > $this->cart[$index]['stok']) {
-                 $this->addError('cart', 'Maksimal stok tercapai.');
-                 return;
+        if ($action === 'plus') {
+            if ($this->cart[$index]['qty'] + 1 > $this->cart[$index]['stok']) {
+                $this->addError('cart', 'Maksimal stok tercapai.');
+                return;
             }
             $this->cart[$index]['qty']++;
-        } elseif($action === 'minus') {
+        } elseif ($action === 'minus') {
             $this->cart[$index]['qty']--;
-            if($this->cart[$index]['qty'] <= 0) {
+            if ($this->cart[$index]['qty'] <= 0) {
                 $this->removeCart($index);
             }
         }
@@ -128,12 +130,12 @@ class Index extends Component
 
     public function setHargaRetail($index)
     {
-         $this->cart[$index]['harga_aktif'] = $this->cart[$index]['harga_jual'];
+        $this->cart[$index]['harga_aktif'] = $this->cart[$index]['harga_jual'];
     }
 
     public function updatedCustomerId($id)
     {
-        if($id) {
+        if ($id) {
             $c = Customer::find($id);
             if (!$c) {
                 $this->customer_id = '';
@@ -168,7 +170,7 @@ class Index extends Component
     public function getSubtotalProperty()
     {
         $total = 0;
-        foreach($this->cart as $item) {
+        foreach ($this->cart as $item) {
             $potongan = (int)$item['diskon_item'] ?: 0;
             $hargaAfterDiscount = $item['harga_aktif'] - $potongan;
             $total += ($hargaAfterDiscount * $item['qty']);
@@ -179,16 +181,16 @@ class Index extends Component
     public function getTotalNettoProperty()
     {
         $total = $this->subtotal - (int)$this->global_discount;
-        
-        if($this->status_ongkir == 'Customer') $total += (int)$this->biaya_ongkir;
-        if($this->status_packing == 'Customer') $total += (int)$this->biaya_packing;
-        
+
+        if ($this->status_ongkir == 'Customer') $total += (int)$this->biaya_ongkir;
+        if ($this->status_packing == 'Customer') $total += (int)$this->biaya_packing;
+
         return $total;
     }
 
     public function processCheckout()
     {
-        if(count($this->cart) == 0) {
+        if (count($this->cart) == 0) {
             $this->addError('cart', 'Keranjang masih kosong.');
             return;
         }
@@ -196,7 +198,7 @@ class Index extends Component
         DB::beginTransaction();
         try {
             $cust_id = null;
-            if($this->customer_id) {
+            if ($this->customer_id) {
                 $cust_id = (int) $this->customer_id;
             } elseif (
                 trim((string) $this->customer_name) !== '' ||
@@ -233,10 +235,10 @@ class Index extends Component
                 'status' => 'Selesai'
             ]);
 
-            foreach($this->cart as $item) {
+            foreach ($this->cart as $item) {
                 $potongan = (int)$item['diskon_item'] ?: 0;
                 $harga_jual_final = (int)$item['harga_aktif'] - $potongan;
-                
+
                 TransactionItem::create([
                     'transaction_id' => $trx->id,
                     'product_item_id' => $item['id'],
@@ -244,6 +246,8 @@ class Index extends Component
                     'subtotal' => $harga_jual_final * $item['qty'],
                     'nama_produk_history' => $item['nama'],
                     'varian_history' => $item['varian'],
+                    'gender_history' => $item['gender'] ?? 'unisex',
+                    'owner_history' => $item['owner'] ?? '-',
                     'harga_modal_history' => $item['harga_modal'],
                     'harga_jual_history' => $harga_jual_final
                 ]);
@@ -257,8 +261,7 @@ class Index extends Component
 
             session()->flash('success', 'Transaksi berhasil disimpan!');
             return redirect()->to('/transactions');
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             $this->addError('cart', 'Gagal checkout: ' . $e->getMessage());
         }
@@ -266,13 +269,13 @@ class Index extends Component
 
     public function render()
     {
-        $products = Product::with(['category', 'items.variantOption1', 'items.variantOption2'])
-            ->where(function($query) {
-                $query->where('nama_produk', 'like', '%'.$this->search.'%')
-                      ->orWhere('kode_produk', 'like', '%'.$this->search.'%');
+        $products = Product::with(['category', 'owner', 'items.variantOption1', 'items.variantOption2'])
+            ->where(function ($query) {
+                $query->where('nama_produk', 'like', '%' . $this->search . '%')
+                    ->orWhere('kode_produk', 'like', '%' . $this->search . '%');
             })
-            ->whereHas('items', function($q){
-                 $q->where('stok_akhir', '>', 0);
+            ->whereHas('items', function ($q) {
+                $q->where('stok_akhir', '>', 0);
             })
             ->orderBy('id', 'desc')
             ->paginate(12);

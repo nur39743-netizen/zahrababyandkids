@@ -144,12 +144,12 @@ class Edit extends Component
     public function save()
     {
         $this->validate([
-            'nama_produk' => 'required|string',
+            'nama_produk' => 'required|string|unique:products,nama_produk,' . $this->product->id,
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
         ]);
-        
+
         $fotoPath = $this->product->foto;
         if ($this->foto instanceof TemporaryUploadedFile) {
             $fotoPath = $this->storeImageAsWebp($this->foto, 'products');

@@ -17,8 +17,8 @@
     <!-- Header (Optional Topbar) -->
     <header class="bg-white shadow relative z-20">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold font-serif text-pink-600">{{ $title ?? 'Zahrababyandkids' }}</h1>
-            
+            <h1 class="text-xl font-bold font-barbie text-pink-600">{{ $title ?? 'Zahrababyandkids' }}</h1>
+
             <form action="/logout" method="POST" class="m-0 p-0">
                 @csrf
                 <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition shadow-sm" title="Logout">
