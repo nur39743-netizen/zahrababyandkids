@@ -37,7 +37,15 @@
                         <div class="px-2 mb-1">
                             <h3 class="font-bold text-gray-800 text-xs">{{ $prod->nama_produk }}</h3>
                             <p class="text-[8px] text-gray-400 mt-1">
-                                <span class="inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded mr-1 font-semibold">{{ strtoupper(substr($prod->gender ?? 'U', 0, 1)) }}</span>
+                                <span class="inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded mr-1 font-semibold">
+                                    @if($prod->gender === 'male')
+                                    L
+                                    @elseif($prod->gender === 'female')
+                                    P
+                                    @else
+                                    U
+                                    @endif
+                                </span>
                                 <span class="text-gray-600">👤 {{ $prod->owner?->nama_owner ?? 'Milik Sendiri' }}</span>
                             </p>
                         </div>
@@ -79,7 +87,15 @@
                         <h4 class="text-sm font-bold text-gray-800 leading-tight">{{ $c['nama'] }}</h4>
                         <p class="text-[10px] font-semibold text-gray-500 bg-gray-100 px-1 inline-block rounded">{{ $c['varian'] }}</p>
                         <p class="text-[8px] text-gray-400 mt-1">
-                            <span class="inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded mr-1 font-semibold">{{ strtoupper(substr($c['gender'] ?? 'U', 0, 1)) }}</span>
+                            <span class="inline-block bg-blue-100 text-blue-700 px-2 py-0.5 rounded mr-1 font-semibold">
+                                @if($c['gender'] === 'male')
+                                L
+                                @elseif($c['gender'] === 'female')
+                                P
+                                @else
+                                U
+                                @endif
+                            </span>
                             <span class="text-gray-500">👤 {{ $c['owner'] ?? '-' }}</span>
                         </p>
                     </div>
