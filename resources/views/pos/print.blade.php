@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,6 +32,7 @@
         }
     </style>
 </head>
+
 <body onload="window.print();">
 
     <div class="text-center border-bottom">
@@ -40,10 +42,22 @@
 
     <div class="border-bottom" style="font-size: 10px;">
         <table style="margin-bottom: 5px;">
-            <tr><td>No</td><td>: {{ $transaction->no_invoice }}</td></tr>
-            <tr><td>Tgl</td><td>: {{ $transaction->created_at->format('d/m/Y H:i') }}</td></tr>
-            <tr><td>Cust</td><td>: {{ $transaction->customer ? $transaction->customer->nama_customer : '-' }}</td></tr>
-            <tr><td>Kasir</td><td>: Admin</td></tr>
+            <tr>
+                <td>No</td>
+                <td>: {{ $transaction->no_invoice }}</td>
+            </tr>
+            <tr>
+                <td>Tgl</td>
+                <td>: {{ $transaction->created_at->format('d/m/Y H:i') }}</td>
+            </tr>
+            <tr>
+                <td>Cust</td>
+                <td>: {{ $transaction->customer ? $transaction->customer->nama_customer : '-' }}</td>
+            </tr>
+            <tr>
+                <td>Kasir</td>
+                <td>: Admin</td>
+            </tr>
         </table>
     </div>
 
@@ -54,7 +68,7 @@
                 <td colspan="3" class="item-name">
                     {{ $item->nama_produk_history }}
                     @if($item->varian_history && $item->varian_history != 'Standard')
-                        <br><span class="item-variant">[{{ $item->varian_history }}]</span>
+                    <br><span class="item-variant">[{{ $item->varian_history }}]</span>
                     @endif
                 </td>
             </tr>
@@ -70,7 +84,7 @@
     <div class="border-bottom total-section">
         <table>
             <tr>
-                <td>Total Bruto</td>
+                <td>Total</td>
                 <td class="text-right">{{ number_format($transaction->total_bruto, 0, ',', '.') }}</td>
             </tr>
             @if($transaction->total_diskon > 0)
@@ -108,4 +122,5 @@
     </div>
 
 </body>
+
 </html>
