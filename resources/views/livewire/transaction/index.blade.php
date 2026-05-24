@@ -49,7 +49,7 @@
                     <a href="/pos/nota/{{ $trx->id }}" target="_blank" onclick="event.stopPropagation()" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-100 transition flex items-center">
                         📄 Nota
                     </a>
-                    <button onclick="event.stopPropagation(); shareNotaWA('{{ $trx->id }}', '{{ $trx->customer?->no_whatsapp ?? '' }}')" class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100 transition flex items-center">
+                    <button onclick="event.stopPropagation(); shareNotaWA('{{ $trx->id }}', '{{ $trx->customer?->no_whatsapp ?? '' }}', '{{ addslashes($trx->customer?->nama_customer ?? 'Pelanggan Umum') }}')" class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100 transition flex items-center">
                         📩 Kirim WA
                     </button>
                     <a href="/pos/print/{{ $trx->id }}" target="_blank" onclick="event.stopPropagation()" class="bg-pink-50 text-pink-600 px-3 py-1.5 rounded-lg font-bold hover:bg-pink-100 transition flex items-center">
@@ -71,7 +71,7 @@
     </div>
 
     <script>
-        async function shareNotaWA(id, phone) {
+        async function shareNotaWA(id, phone, name) {
             phone = (phone || '').replace(/\D/g, '');
             if (!phone) { alert('Nomor WhatsApp customer tidak tersedia.'); return; }
             if (phone.startsWith('0')) phone = '62' + phone.slice(1);
@@ -86,7 +86,7 @@
                     body: JSON.stringify({})
                 });
                 const data = await res.json();
-                const msg = `Halo, terima kasih. Silakan lihat nota transaksi Anda: ${data.url}`;
+                const msg = `Halo kak ${name},\nTerima kasih sudah belanja di *zahrababyandkids* 😊, nota kakak bisa dicek di link ini yah : ${data.url}`;
                 const wa = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
                 window.open(wa, '_blank');
             } catch (e) {

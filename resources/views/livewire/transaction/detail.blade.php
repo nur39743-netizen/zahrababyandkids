@@ -62,7 +62,7 @@
                 <a href="/pos/print/{{ $transaction->id }}" target="_blank" class="flex-1 flex justify-center items-center bg-pink-50 text-pink-600 px-4 py-2.5 rounded-lg font-bold hover:bg-pink-100 transition text-sm">
                     🖨️ Cetak Ulang Struk
                 </a>
-                <button onclick="shareNotaWA('{{ $transaction->id }}', '{{ $transaction->customer?->no_whatsapp ?? '' }}')" class="flex-1 bg-green-50 text-green-700 px-4 py-2.5 rounded-lg font-bold hover:bg-green-100 transition text-sm">
+                <button onclick="shareNotaWA('{{ $transaction->id }}', '{{ $transaction->customer?->no_whatsapp ?? '' }}', '{{ addslashes($transaction->customer?->nama_customer ?? 'Pelanggan Umum') }}')" class="flex-1 bg-green-50 text-green-700 px-4 py-2.5 rounded-lg font-bold hover:bg-green-100 transition text-sm">
                     📩 Kirim Nota via WA
                 </button>
             </div>
@@ -124,7 +124,7 @@
 </div>
 
 <script>
-    async function shareNotaWA(id, phone) {
+    async function shareNotaWA(id, phone, name) {
         phone = (phone || '').replace(/\D/g, '');
         if (!phone) { alert('Nomor WhatsApp customer tidak tersedia.'); return; }
         if (phone.startsWith('0')) phone = '62' + phone.slice(1);
@@ -139,7 +139,7 @@
                 body: JSON.stringify({})
             });
             const data = await res.json();
-            const msg = `Halo, terima kasih. Silakan lihat nota transaksi Anda: ${data.url}`;
+            const msg = `Halo kak ${name},\nTerima kasih sudah belanja di *zahrababyandkids* 😊, nota kakak bisa dicek di link ini yah : ${data.url}`;
             const wa = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
             window.open(wa, '_blank');
         } catch (e) {
