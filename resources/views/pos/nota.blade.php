@@ -143,6 +143,7 @@
     </div>
 
     <!-- Actions (No Print) -->
+    @if(!request()->route('token'))
     <div class="max-w-2xl mx-auto mt-8 flex flex-col sm:flex-row justify-center gap-4 no-print px-4">
         <button onclick="window.print()" class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-pink-200 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,6 +155,7 @@
             Kembali
         </a>
     </div>
+    @endif
 
 </body>
 
