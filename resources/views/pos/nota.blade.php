@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,16 @@
     <style>
         @media print {
             body { background: white; }
-            .no-print { display: none; }
+            /* hide the actions and any children reliably */
+            .no-print, .no-print * { display: none !important; visibility: hidden !important; }
             .print-shadow-none { box-shadow: none !important; border: none !important; }
+        }
+        @media screen {
+            .no-print { display: block; visibility: visible; }
         }
     </style>
 </head>
+
 <body class="bg-pink-50/30 text-gray-800 font-sans antialiased py-8 min-h-screen">
 
     <div class="max-w-2xl mx-auto bg-white p-8 sm:p-10 rounded-3xl shadow-xl print-shadow-none border border-pink-100">
@@ -53,9 +59,9 @@
                 <div class="flex flex-col gap-2">
                     <div>
                         @if(($transaction->status_pembayaran ?? 'lunas') === 'lunas')
-                            <span class="inline-block bg-green-100 text-green-700 font-bold text-xs px-3 py-1 rounded-lg">LUNAS</span>
+                        <span class="inline-block bg-green-100 text-green-700 font-bold text-xs px-3 py-1 rounded-lg">LUNAS</span>
                         @else
-                            <span class="inline-block bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1 rounded-lg">BELUM LUNAS</span>
+                        <span class="inline-block bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1 rounded-lg">BELUM LUNAS</span>
                         @endif
                     </div>
                     <p class="text-sm text-gray-700 font-medium flex items-center gap-2">
@@ -84,7 +90,7 @@
                         <td class="py-4 px-5">
                             <p class="font-bold text-gray-800 text-sm">{{ $item->nama_produk_history }}</p>
                             @if($item->varian_history && $item->varian_history != 'Standard')
-                                <p class="inline-block bg-pink-50 text-pink-600 text-[10px] font-bold px-2 py-0.5 rounded mt-1">{{ $item->varian_history }}</p>
+                            <p class="inline-block bg-pink-50 text-pink-600 text-[10px] font-bold px-2 py-0.5 rounded mt-1">{{ $item->varian_history }}</p>
                             @endif
                             <p class="text-xs text-gray-400 mt-1 font-medium">@ Rp{{ number_format($item->harga_jual_history, 0, ',', '.') }}</p>
                         </td>
@@ -133,7 +139,6 @@
         <!-- Footer -->
         <div class="text-center text-gray-500 text-xs sm:text-sm pt-8 border-t-2 border-dashed border-gray-200">
             <p class="font-medium">Terima kasih atas kepercayaan Anda berbelanja di <span class="font-bold text-pink-600">Zahrababyandkids</span>.</p>
-            <p class="mt-1">Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan.</p>
         </div>
     </div>
 
@@ -151,4 +156,5 @@
     </div>
 
 </body>
+
 </html>

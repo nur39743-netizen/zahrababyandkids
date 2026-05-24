@@ -38,6 +38,12 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
+// Public nota viewing by token (no auth)
+Route::get('/pos/nota/public/{id}/{token}', function ($id, $token) {
+    $transaction = Transaction::with(['customer', 'items'])->where('id', $id)->where('public_token', $token)->firstOrFail();
+    return view('pos.nota', compact('transaction'));
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/', DashboardIndex::class);
 
@@ -72,6 +78,19 @@ Route::middleware('auth')->group(function () {
         $transaction = Transaction::with(['customer', 'items'])->findOrFail($id);
         return view('pos.nota', compact('transaction'));
     });
+
+    // Generate or return existing public nota link (for sharing via WhatsApp)
+    Route::post('/transactions/{id}/public-link', function ($id) {
+        $transaction = Transaction::findOrFail($id);
+        if (!$transaction->public_token) {
+            $transaction->public_token = (string) \Illuminate\Support\Str::random(40);
+            $transaction->save();
+        }
+
+        return response()->json([
+            'url' => url('/pos/nota/public/' . $transaction->id . '/' . $transaction->public_token),
+        ]);
+    })->where('id', '[0-9]+');
 
     Route::get('/products', ProductIndex::class);
     Route::get('/products/create', ProductCreate::class);

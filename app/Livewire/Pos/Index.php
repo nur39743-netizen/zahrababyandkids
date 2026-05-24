@@ -232,7 +232,8 @@ class Index extends Component
                     ? Transaction::STATUS_PEMBAYARAN_BELUM
                     : Transaction::STATUS_PEMBAYARAN_LUNAS,
                 'catatan' => $this->transaksi_catatan,
-                'status' => 'Selesai'
+                'status' => 'Selesai',
+                'public_token' => Str::random(40)
             ]);
 
             foreach ($this->cart as $item) {

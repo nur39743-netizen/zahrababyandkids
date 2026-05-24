@@ -50,6 +50,9 @@
                     <a href="/pos/nota/{{ $trx->id }}" target="_blank" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-100 transition flex items-center">
                         📄 Nota
                     </a>
+                    <button onclick="shareNotaWA('{{ $trx->id }}', '{{ $trx->customer?->no_whatsapp ?? '' }}')" class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100 transition flex items-center">
+                        📩 Kirim WA
+                    </button>
                     <a href="/pos/print/{{ $trx->id }}" target="_blank" class="bg-pink-50 text-pink-600 px-3 py-1.5 rounded-lg font-bold hover:bg-pink-100 transition flex items-center">
                         🖨️ Cetak
                     </a>
@@ -67,4 +70,29 @@
     <div>
         {{ $transactions->links(data: ['scrollTo' => false]) }}
     </div>
+
+    <script>
+        async function shareNotaWA(id, phone) {
+            phone = (phone || '').replace(/\D/g, '');
+            if (!phone) { alert('Nomor WhatsApp customer tidak tersedia.'); return; }
+            if (phone.startsWith('0')) phone = '62' + phone.slice(1);
+
+            try {
+                const res = await fetch('/transactions/' + id + '/public-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+                const msg = `Halo, terima kasih. Silakan lihat nota transaksi Anda: ${data.url}`;
+                const wa = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+                window.open(wa, '_blank');
+            } catch (e) {
+                alert('Gagal membuat link nota: ' + e.message);
+            }
+        }
+    </script>
 </div>
