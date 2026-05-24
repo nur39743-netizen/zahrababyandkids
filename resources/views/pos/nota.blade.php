@@ -106,7 +106,7 @@
         <div class="flex justify-end mb-10">
             <div class="w-full sm:w-2/3 lg:w-1/2 bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-3">
                 <div class="flex justify-between text-gray-600 text-sm font-medium">
-                    <span>Total Bruto</span>
+                    <span>Total</span>
                     <span class="text-gray-800 font-bold">Rp{{ number_format($transaction->total_bruto, 0, ',', '.') }}</span>
                 </div>
                 @if($transaction->total_diskon > 0)
