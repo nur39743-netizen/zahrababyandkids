@@ -19,7 +19,7 @@
     <!-- List -->
     <div class="space-y-3">
         @forelse($transactions as $trx)
-        <div class="bg-white rounded-xl shadow-sm border border-pink-50 overflow-hidden relative">
+        <div onclick="window.location='/transactions/{{ $trx->id }}'" role="button" class="bg-white rounded-xl shadow-sm border border-pink-50 overflow-hidden relative cursor-pointer">
             <div class="p-4 bg-gradient-to-r from-pink-50 to-white flex justify-between items-center border-b border-gray-50">
                 <div>
                     <h3 class="font-bold text-gray-800 text-sm leading-none">{{ $trx->no_invoice }}</h3>
@@ -46,14 +46,13 @@
                     <p class="font-bold text-[11px] text-gray-500">👤 {{ $trx->customer ? $trx->customer->nama_customer : 'Pelanggan Umum' }}</p>
                 </div>
                 <div class="flex space-x-2">
-                    <a href="/transactions/{{ $trx->id }}" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-bold hover:bg-blue-100 transition">Detail</a>
-                    <a href="/pos/nota/{{ $trx->id }}" target="_blank" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-100 transition flex items-center">
+                    <a href="/pos/nota/{{ $trx->id }}" target="_blank" onclick="event.stopPropagation()" class="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-100 transition flex items-center">
                         📄 Nota
                     </a>
-                    <button onclick="shareNotaWA('{{ $trx->id }}', '{{ $trx->customer?->no_whatsapp ?? '' }}')" class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100 transition flex items-center">
+                    <button onclick="event.stopPropagation(); shareNotaWA('{{ $trx->id }}', '{{ $trx->customer?->no_whatsapp ?? '' }}')" class="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100 transition flex items-center">
                         📩 Kirim WA
                     </button>
-                    <a href="/pos/print/{{ $trx->id }}" target="_blank" class="bg-pink-50 text-pink-600 px-3 py-1.5 rounded-lg font-bold hover:bg-pink-100 transition flex items-center">
+                    <a href="/pos/print/{{ $trx->id }}" target="_blank" onclick="event.stopPropagation()" class="bg-pink-50 text-pink-600 px-3 py-1.5 rounded-lg font-bold hover:bg-pink-100 transition flex items-center">
                         🖨️ Cetak
                     </a>
                 </div>
