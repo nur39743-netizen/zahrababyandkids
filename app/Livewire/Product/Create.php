@@ -139,6 +139,8 @@ class Create extends Component
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
         ]);
 
         DB::beginTransaction();
@@ -218,32 +220,64 @@ class Create extends Component
 
     private function storeImageAsWebp(TemporaryUploadedFile $file, string $folder): string
     {
-        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
-            throw new \RuntimeException('GD extension with WebP support is not available.');
-        }
-
-        $binary = file_get_contents($file->getRealPath());
+        $realPath = $file->getRealPath();
+        $binary = @file_get_contents($realPath);
         if ($binary === false) {
             throw new \RuntimeException('Failed to read uploaded image file.');
         }
 
-        $image = imagecreatefromstring($binary);
+        $image = @imagecreatefromstring($binary);
         if ($image === false) {
-            throw new \RuntimeException('Invalid image file.');
+            // If decoding fails, store original upload with extension fallback
+            $origName = method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : $file->getFilename();
+            $ext = pathinfo($origName, PATHINFO_EXTENSION) ?: 'bin';
+            $filename = $folder . '/' . Str::random(40) . '.' . $ext;
+            Storage::disk('public')->put($filename, $binary);
+            return $filename;
         }
 
-        $filename = $folder . '/' . Str::random(40) . '.webp';
-        ob_start();
-        imagewebp($image, null, 80);
-        $webpBinary = ob_get_clean();
+        // Prefer WebP when supported
+        if (function_exists('imagewebp')) {
+            $filename = $folder . '/' . Str::random(40) . '.webp';
+            ob_start();
+            imagewebp($image, null, 80);
+            $out = ob_get_clean();
+            imagedestroy($image);
+            if ($out === false) {
+                throw new \RuntimeException('Failed to encode image as WebP.');
+            }
+            Storage::disk('public')->put($filename, $out);
+            return $filename;
+        }
+
+        // Fallback to JPEG
+        if (function_exists('imagejpeg')) {
+            $filename = $folder . '/' . Str::random(40) . '.jpg';
+            ob_start();
+            imagejpeg($image, null, 85);
+            $out = ob_get_clean();
+            imagedestroy($image);
+            Storage::disk('public')->put($filename, $out);
+            return $filename;
+        }
+
+        // Fallback to PNG
+        if (function_exists('imagepng')) {
+            $filename = $folder . '/' . Str::random(40) . '.png';
+            ob_start();
+            imagepng($image);
+            $out = ob_get_clean();
+            imagedestroy($image);
+            Storage::disk('public')->put($filename, $out);
+            return $filename;
+        }
+
+        // Last resort: save original binary
         imagedestroy($image);
-
-        if ($webpBinary === false) {
-            throw new \RuntimeException('Failed to encode image as WebP.');
-        }
-
-        Storage::disk('public')->put($filename, $webpBinary);
-
+        $origName = method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : $file->getFilename();
+        $ext = pathinfo($origName, PATHINFO_EXTENSION) ?: 'bin';
+        $filename = $folder . '/' . Str::random(40) . '.' . $ext;
+        Storage::disk('public')->put($filename, $binary);
         return $filename;
     }
 

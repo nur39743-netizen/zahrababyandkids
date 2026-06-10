@@ -14,7 +14,7 @@
 
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
-                <input type="file" wire:model="foto" accept="image/*" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                <input type="file" wire:model="foto" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
                 @if($foto)
                 @if(is_object($foto))
                 <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
@@ -128,7 +128,7 @@
                                 {{ $row['v1'] }} {{ $row['v2'] ? ' / '.$row['v2'] : '' }}
                             </td>
                             <td class="py-2 px-1">
-                                <input type="file" wire:model="item_fotos.{{$index}}" accept="image/*" class="w-16 text-[10px]">
+                                <input type="file" wire:model="item_fotos.{{$index}}" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-16 text-[10px]">
                                 @if(isset($item_fotos[$index]))
                                 @if(is_object($item_fotos[$index]))
                                 <img src="{{ $item_fotos[$index]->temporaryUrl() }}" alt="Preview" class="mt-1 w-8 h-8 object-cover rounded">
