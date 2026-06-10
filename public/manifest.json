@@ -1,10 +1,14 @@
 {
-  "name": "Zahrababyandkids",
+  "name": "Zahrababyandkids - Baby & Kids Store",
   "short_name": "Zahrababy",
+  "description": "Toko online perlengkapan bayi dan anak-anak",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#FDFDFC",
+  "categories": ["shopping"],
   "icons": [
     { "src": "/icons/pwa-icon.png", "sizes": "512x512", "type": "image/png" },
     { "src": "/icons/pwa-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
