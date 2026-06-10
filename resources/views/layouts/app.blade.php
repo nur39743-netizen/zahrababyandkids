@@ -7,6 +7,10 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FDFDFC">
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+
     <title>{{ $title ?? config('app.name') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -83,6 +87,15 @@
     @endauth
 
     @livewireScripts
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function (reg) { console.log('Service Worker registered:', reg.scope); })
+                    .catch(function (err) { console.error('Service Worker registration failed:', err); });
+            });
+        }
+    </script>
 </body>
 
 </html>

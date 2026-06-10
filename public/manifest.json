@@ -1,0 +1,12 @@
+{
+  "name": "Zahrababyandkids",
+  "short_name": "Zahrababy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FDFDFC",
+  "icons": [
+    { "src": "/icons/pwa-icon.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/pwa-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
