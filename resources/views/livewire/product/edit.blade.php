@@ -26,14 +26,18 @@
                 @error('nama_produk') <span class="text-red-500 text-[10px] mt-1">{{ $message }}</span> @enderror
             </div>
 
-            <div>
+            <div x-data="{ isUploading: false, progress: 0 }"
+                 x-on:livewire-upload-start="isUploading = true"
+                 x-on:livewire-upload-finish="isUploading = false"
+                 x-on:livewire-upload-error="isUploading = false"
+                 x-on:livewire-upload-progress="progress = $event.detail.progress">
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
                 <input type="file" wire:model="foto" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
-                <div class="mt-2">
-                    <div class="h-2 bg-gray-200 rounded overflow-hidden hidden" data-upload-container="foto">
-                        <div class="h-full bg-pink-500 w-0 transition-all" data-upload-bar></div>
+                <div x-show="isUploading" class="mt-2" style="display: none;">
+                    <div class="h-2 bg-gray-200 rounded overflow-hidden">
+                        <div class="h-full bg-pink-500 transition-all duration-300" x-bind:style="'width: ' + progress + '%'"></div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1 hidden" data-upload-status="foto">Mengunggah foto...</div>
+                    <div class="text-xs text-gray-500 mt-1">Mengunggah foto... <span x-text="progress"></span>%</div>
                 </div>
                 @if($foto)
                 @if(is_object($foto))
@@ -150,13 +154,18 @@
                             <td class="py-2 font-medium text-gray-700 sticky left-0 bg-white z-10">
                                 {{ $row['v1'] }} {{ $row['v2'] ? ' / '.$row['v2'] : '' }}
                             </td>
-                            <td class="py-2 px-1">
+                            <td class="py-2 px-1"
+                                x-data="{ isUploading: false, progress: 0 }"
+                                x-on:livewire-upload-start="isUploading = true"
+                                x-on:livewire-upload-finish="isUploading = false"
+                                x-on:livewire-upload-error="isUploading = false"
+                                x-on:livewire-upload-progress="progress = $event.detail.progress">
                                 <input type="file" wire:model="item_fotos.{{$index}}" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-16 text-[10px]">
-                                <div class="mt-1">
-                                    <div class="h-2 bg-gray-200 rounded overflow-hidden hidden" data-upload-container="item_fotos.{{$index}}">
-                                        <div class="h-full bg-pink-500 w-0 transition-all" data-upload-bar></div>
+                                <div x-show="isUploading" class="mt-1 w-16" style="display: none;">
+                                    <div class="h-1 bg-gray-200 rounded overflow-hidden">
+                                        <div class="h-full bg-pink-500 transition-all duration-300" x-bind:style="'width: ' + progress + '%'"></div>
                                     </div>
-                                    <div class="text-[10px] text-gray-500 mt-1 hidden" data-upload-status="item_fotos.{{$index}}">Mengunggah foto item...</div>
+                                    <div class="text-[8px] text-gray-500 mt-1">Mengunggah <span x-text="progress"></span>%</div>
                                 </div>
                                 @if(isset($item_fotos[$index]))
                                 @if(is_object($item_fotos[$index]))
@@ -180,49 +189,14 @@
             </div>
         </div>
 
-        <button type="submit" wire:loading.attr="disabled" wire:target="save" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 disabled:opacity-50">
+        <button type="submit" wire:loading.attr="disabled" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
             <span wire:loading wire:target="save">Menyimpan...</span>
-            <span wire:loading.remove wire:target="save">Simpan Perubahan</span>
+            <span wire:loading wire:target="foto">Mengunggah foto...</span>
+            <span wire:loading.remove wire:target="save, foto">Simpan Perubahan</span>
         </button>
     </form>
 
-    <script>
-        function setUploadProgress(name, value) {
-            var container = document.querySelector('[data-upload-container="' + name + '"]');
-            var status = document.querySelector('[data-upload-status="' + name + '"]');
-            if (!container) return;
-            var bar = container.querySelector('[data-upload-bar]');
-            container.classList.remove('hidden');
-            if (status) status.classList.remove('hidden');
-            bar.style.width = value + '%';
-        }
 
-        function resetUpload(name) {
-            var container = document.querySelector('[data-upload-container="' + name + '"]');
-            var status = document.querySelector('[data-upload-status="' + name + '"]');
-            if (!container) return;
-            var bar = container.querySelector('[data-upload-bar]');
-            bar.style.width = '100%';
-            setTimeout(function () {
-                container.classList.add('hidden');
-                bar.style.width = '0';
-                if (status) status.classList.add('hidden');
-            }, 500);
-        }
-
-        document.addEventListener('livewire-upload-start', function (event) {
-            setUploadProgress(event.detail.name, 0);
-        });
-        document.addEventListener('livewire-upload-progress', function (event) {
-            setUploadProgress(event.detail.name, event.detail.progress);
-        });
-        document.addEventListener('livewire-upload-finish', function (event) {
-            resetUpload(event.detail.name);
-        });
-        document.addEventListener('livewire-upload-error', function (event) {
-            resetUpload(event.detail.name);
-        });
-    </script>
 
     <!-- Modal for Adding Item -->
     @if($showAddItemModal)
