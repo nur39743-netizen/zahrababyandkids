@@ -17,6 +17,12 @@
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
                 <input type="file" wire:model="foto" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                <div class="mt-2">
+                    <div class="h-2 bg-gray-200 rounded overflow-hidden hidden" data-upload-container="foto">
+                        <div class="h-full bg-pink-500 w-0 transition-all" data-upload-bar></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1 hidden" data-upload-status="foto">Mengunggah foto...</div>
+                </div>
                 @if($foto)
                 @if(is_object($foto))
                 <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
@@ -131,6 +137,12 @@
                             </td>
                             <td class="py-2 px-1">
                                 <input type="file" wire:model="item_fotos.{{$index}}" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-16 text-[10px]">
+                                <div class="mt-1">
+                                    <div class="h-2 bg-gray-200 rounded overflow-hidden hidden" data-upload-container="item_fotos.{{$index}}">
+                                        <div class="h-full bg-pink-500 w-0 transition-all" data-upload-bar></div>
+                                    </div>
+                                    <div class="text-[10px] text-gray-500 mt-1 hidden" data-upload-status="item_fotos.{{$index}}">Mengunggah foto item...</div>
+                                </div>
                                 @if(isset($item_fotos[$index]))
                                 @if(is_object($item_fotos[$index]))
                                 <img src="{{ $item_fotos[$index]->temporaryUrl() }}" alt="Preview" class="mt-1 w-8 h-8 object-cover rounded">
@@ -158,6 +170,44 @@
             <span wire:loading.remove wire:target="save">Simpan Perubahan</span>
         </button>
     </form>
+
+    <script>
+        function setUploadProgress(name, value) {
+            var container = document.querySelector('[data-upload-container="' + name + '"]');
+            var status = document.querySelector('[data-upload-status="' + name + '"]');
+            if (!container) return;
+            var bar = container.querySelector('[data-upload-bar]');
+            container.classList.remove('hidden');
+            if (status) status.classList.remove('hidden');
+            bar.style.width = value + '%';
+        }
+
+        function resetUpload(name) {
+            var container = document.querySelector('[data-upload-container="' + name + '"]');
+            var status = document.querySelector('[data-upload-status="' + name + '"]');
+            if (!container) return;
+            var bar = container.querySelector('[data-upload-bar]');
+            bar.style.width = '100%';
+            setTimeout(function () {
+                container.classList.add('hidden');
+                bar.style.width = '0';
+                if (status) status.classList.add('hidden');
+            }, 500);
+        }
+
+        document.addEventListener('livewire-upload-start', function (event) {
+            setUploadProgress(event.detail.name, 0);
+        });
+        document.addEventListener('livewire-upload-progress', function (event) {
+            setUploadProgress(event.detail.name, event.detail.progress);
+        });
+        document.addEventListener('livewire-upload-finish', function (event) {
+            resetUpload(event.detail.name);
+        });
+        document.addEventListener('livewire-upload-error', function (event) {
+            resetUpload(event.detail.name);
+        });
+    </script>
 
     <!-- Modal for Adding Item -->
     @if($showAddItemModal)

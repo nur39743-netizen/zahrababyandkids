@@ -28,10 +28,20 @@
                 @error('nama_produk') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
             </div>
 
-            <div>
+            <div x-data="{ isUploading: false, progress: 0 }"
+                 x-on:livewire-upload-start="isUploading = true"
+                 x-on:livewire-upload-finish="isUploading = false"
+                 x-on:livewire-upload-error="isUploading = false"
+                 x-on:livewire-upload-progress="progress = $event.detail.progress">
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
                 <input type="file" wire:model="foto" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
                 @error('foto') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
+                <div x-show="isUploading" class="mt-2" style="display: none;">
+                    <div class="h-2 bg-gray-200 rounded overflow-hidden">
+                        <div class="h-full bg-pink-500 transition-all duration-300" x-bind:style="'width: ' + progress + '%'"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">Mengunggah foto... <span x-text="progress"></span>%</div>
+                </div>
                 @if($foto)
                 <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
                 @endif
@@ -120,10 +130,20 @@
                 </div>
             </div>
 
-            <div>
+            <div x-data="{ isUploading: false, progress: 0 }"
+                 x-on:livewire-upload-start="isUploading = true"
+                 x-on:livewire-upload-finish="isUploading = false"
+                 x-on:livewire-upload-error="isUploading = false"
+                 x-on:livewire-upload-progress="progress = $event.detail.progress">
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Item</label>
                 <input type="file" wire:model="item_fotos.0" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
                 @error('item_fotos.0') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
+                <div x-show="isUploading" class="mt-2" style="display: none;">
+                    <div class="h-2 bg-gray-200 rounded overflow-hidden">
+                        <div class="h-full bg-pink-500 transition-all duration-300" x-bind:style="'width: ' + progress + '%'"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">Mengunggah foto item... <span x-text="progress"></span>%</div>
+                </div>
                 @if(isset($item_fotos[0]))
                 <img src="{{ $item_fotos[0]->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
                 @endif
@@ -232,9 +252,20 @@
                             <td class="py-2 font-medium text-gray-700 sticky left-0 bg-white z-10">
                                 {{ $row['v1_val'] }} {{ $row['v2_val'] ? ' / '.$row['v2_val'] : '' }}
                             </td>
-                            <td class="py-2 px-1">
+                            <td class="py-2 px-1"
+                                x-data="{ isUploading: false, progress: 0 }"
+                                x-on:livewire-upload-start="isUploading = true"
+                                x-on:livewire-upload-finish="isUploading = false"
+                                x-on:livewire-upload-error="isUploading = false"
+                                x-on:livewire-upload-progress="progress = $event.detail.progress">
                                 <input type="file" wire:model="item_fotos.{{$index}}" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-16 text-[10px]">
                                 @error('item_fotos.'.$index) <div class="text-red-500 text-[10px] mt-1">{{ $message }}</div> @enderror
+                                <div x-show="isUploading" class="mt-1 w-16" style="display: none;">
+                                    <div class="h-1 bg-gray-200 rounded overflow-hidden">
+                                        <div class="h-full bg-pink-500 transition-all duration-300" x-bind:style="'width: ' + progress + '%'"></div>
+                                    </div>
+                                    <div class="text-[8px] text-gray-500 mt-1">Mengunggah <span x-text="progress"></span>%</div>
+                                </div>
                                 @if(isset($item_fotos[$index]))
                                 <img src="{{ $item_fotos[$index]->temporaryUrl() }}" alt="Preview" class="mt-1 w-8 h-8 object-cover rounded">
                                 @endif
@@ -260,6 +291,5 @@
             <span wire:loading.remove wire:target="save">Simpan Produk</span>
         </button>
     </form>
-
 
 </div>
