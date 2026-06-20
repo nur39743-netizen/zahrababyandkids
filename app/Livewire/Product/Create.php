@@ -139,8 +139,8 @@ class Create extends Component
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
-            'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
+            'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
         ];
 
         $messages = [
@@ -264,6 +264,28 @@ class Create extends Component
             $filename = $folder . '/' . Str::random(40) . '.' . $ext;
             Storage::disk('public')->put($filename, $binary);
             return $filename;
+        }
+
+        // Resize image if it exceeds 1024x1024
+        $maxWidth = 1024;
+        $maxHeight = 1024;
+        $origWidth = imagesx($image);
+        $origHeight = imagesy($image);
+
+        if ($origWidth > $maxWidth || $origHeight > $maxHeight) {
+            $ratio = min($maxWidth / $origWidth, $maxHeight / $origHeight);
+            $newWidth = (int) ($origWidth * $ratio);
+            $newHeight = (int) ($origHeight * $ratio);
+
+            $newImage = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($newImage, false);
+            imagesavealpha($newImage, true);
+            $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+            imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
+
+            imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+            imagedestroy($image);
+            $image = $newImage;
         }
 
         // Prefer WebP when supported
