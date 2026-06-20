@@ -179,76 +179,85 @@ class Edit extends Component
 
         $this->validate($rules, $messages, $attributes);
 
-        $fotoPath = $this->product->foto;
-        if ($this->foto && method_exists($this->foto, 'getRealPath')) {
-            $fotoPath = $this->storeImageAsWebp($this->foto, 'products');
-        }
-
-        $categoryChanged = (string) ($this->category_id ?: '') !== (string) ($this->product->category_id ?: '');
-        $payload = [
-            'nama_produk' => $this->nama_produk,
-            'category_id' => $this->category_id ?: null,
-            'owner_id' => $this->owner_id ?: null,
-            'supplier_id' => $this->supplier_id ?: null,
-            'gender' => $this->gender,
-            'bahan' => $this->bahan ?: null,
-            'foto' => $fotoPath,
-        ];
-
-        if ($categoryChanged && $this->category_id) {
-            $cat = Category::find($this->category_id);
-            if ($cat) {
-                $payload['kode_produk'] = ProductCodeService::nextCodeForCategory($cat);
-            }
-        }
-
-        $this->product->update($payload);
-
-        foreach ($this->items as $index => $data) {
-            $fotoPath = null;
-            if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] && method_exists($this->item_fotos[$index], 'getRealPath')) {
-                $fotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
-            } elseif (isset($this->item_fotos[$index])) {
-                $fotoPath = $this->item_fotos[$index];
+        \Illuminate\Support\Facades\DB::beginTransaction();
+        try {
+            $fotoPath = $this->product->foto;
+            if ($this->foto && method_exists($this->foto, 'getRealPath')) {
+                $fotoPath = $this->storeImageAsWebp($this->foto, 'products');
             }
 
-            if (is_numeric($data['id'])) {
-                // Update existing
-                ProductItem::where('id', $data['id'])->update([
-                    'harga_modal' => $data['modal'],
-                    'harga_sell' => $data['sell'],
-                    'harga_jual' => $data['jual'],
-                    'stok_akhir' => $data['stok'],
-                    'foto' => $fotoPath,
-                ]);
-            } else {
-                // Create new
-                $variant1Id = null;
-                $variant2Id = null;
-                if ($data['v1'] !== 'Standard') {
-                    $option1 = VariantOption::where('value', $data['v1'])->first();
-                    $variant1Id = $option1 ? $option1->id : null;
+            $categoryChanged = (string) ($this->category_id ?: '') !== (string) ($this->product->category_id ?: '');
+            $payload = [
+                'nama_produk' => $this->nama_produk,
+                'category_id' => $this->category_id ?: null,
+                'owner_id' => $this->owner_id ?: null,
+                'supplier_id' => $this->supplier_id ?: null,
+                'gender' => $this->gender,
+                'bahan' => $this->bahan ?: null,
+                'foto' => $fotoPath,
+            ];
+
+            if ($categoryChanged && $this->category_id) {
+                $cat = Category::find($this->category_id);
+                if ($cat) {
+                    $payload['kode_produk'] = ProductCodeService::nextCodeForCategory($cat);
                 }
-                if ($data['v2']) {
-                    $option2 = VariantOption::where('value', $data['v2'])->first();
-                    $variant2Id = $option2 ? $option2->id : null;
-                }
-                ProductItem::create([
-                    'product_id' => $this->product->id,
-                    'variant_option_1_id' => $variant1Id,
-                    'variant_option_2_id' => $variant2Id,
-                    'harga_modal' => $data['modal'],
-                    'harga_sell' => $data['sell'],
-                    'harga_jual' => $data['jual'],
-                    'stok_akhir' => $data['stok'],
-                    'foto' => $fotoPath,
-                ]);
             }
+
+            $this->product->update($payload);
+
+            foreach ($this->items as $index => $data) {
+                $itemFotoPath = null;
+                if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] && method_exists($this->item_fotos[$index], 'getRealPath')) {
+                    $itemFotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
+                } elseif (isset($this->item_fotos[$index])) {
+                    $itemFotoPath = $this->item_fotos[$index];
+                }
+
+                if (is_numeric($data['id'])) {
+                    // Update existing
+                    ProductItem::where('id', $data['id'])->update([
+                        'harga_modal' => $data['modal'],
+                        'harga_sell' => $data['sell'],
+                        'harga_jual' => $data['jual'],
+                        'stok_akhir' => $data['stok'],
+                        'foto' => $itemFotoPath,
+                    ]);
+                } else {
+                    // Create new
+                    $variant1Id = null;
+                    $variant2Id = null;
+                    if ($data['v1'] !== 'Standard') {
+                        $option1 = VariantOption::where('value', $data['v1'])->first();
+                        $variant1Id = $option1 ? $option1->id : null;
+                    }
+                    if ($data['v2']) {
+                        $option2 = VariantOption::where('value', $data['v2'])->first();
+                        $variant2Id = $option2 ? $option2->id : null;
+                    }
+                    ProductItem::create([
+                        'product_id' => $this->product->id,
+                        'variant_option_1_id' => $variant1Id,
+                        'variant_option_2_id' => $variant2Id,
+                        'harga_modal' => $data['modal'],
+                        'harga_sell' => $data['sell'],
+                        'harga_jual' => $data['jual'],
+                        'stok_akhir' => $data['stok'],
+                        'foto' => $itemFotoPath,
+                    ]);
+                }
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
+
+            session()->flash('success', 'Perubahan produk berhasil disimpan.');
+
+            return redirect()->to('/products/' . $this->product->id);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Gagal menyimpan perubahan produk: ' . $e->getMessage() . ' di baris ' . $e->getLine());
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        session()->flash('success', 'Perubahan produk berhasil disimpan.');
-
-        return redirect()->to('/products/' . $this->product->id);
     }
 
     private function storeImageAsWebp($file, string $folder): string

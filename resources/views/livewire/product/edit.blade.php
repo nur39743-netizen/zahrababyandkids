@@ -4,7 +4,18 @@
         <a href="/products/{{ $product->id }}" class="text-gray-400 hover:text-pink-600 transition">Batal</a>
     </div>
 
+    @if (session()->has('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
 
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Gagal menyimpan!</strong>
+            <span class="block sm:inline">Silakan periksa kembali isian Anda.</span>
+        </div>
+    @endif
 
     <form wire:submit.prevent="save" enctype="multipart/form-data" class="space-y-6">
         <!-- Basic Info -->
@@ -12,6 +23,7 @@
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Nama Produk <span class="text-red-500">*</span></label>
                 <input type="text" wire:model="nama_produk" required class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @error('nama_produk') <span class="text-red-500 text-[10px] mt-1">{{ $message }}</span> @enderror
             </div>
 
             <div>
@@ -30,6 +42,7 @@
                 <img src="{{ asset('storage/' . $foto) }}" alt="Current" class="mt-2 w-20 h-20 object-cover rounded-lg border">
                 @endif
                 @endif
+                @error('foto') <span class="text-red-500 text-[10px] mt-1 block">{{ $message }}</span> @enderror
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -45,6 +58,7 @@
                         <option value="{{ $cat->id }}">{{ $cat->nama_kategori }}</option>
                         @endforeach
                     </select>
+                    @error('category_id') <span class="text-red-500 text-[10px] mt-1">{{ $message }}</span> @enderror
                 </div>
             </div>
 
@@ -77,6 +91,7 @@
                         <option value="female">Perempuan / Female</option>
                         <option value="unisex">Unisex / Netral</option>
                     </select>
+                    @error('gender') <span class="text-red-500 text-[10px] mt-1">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Bahan</label>
