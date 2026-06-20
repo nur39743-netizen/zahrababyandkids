@@ -13,7 +13,7 @@ use App\Models\VariantOption;
 use App\Services\ProductCodeService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+// avoid strict TemporaryUploadedFile type-hint for compatibility
 
 class Edit extends Component
 {
@@ -143,17 +143,42 @@ class Edit extends Component
 
     public function save()
     {
-        $this->validate([
+        $rules = [
             'nama_produk' => 'required|string|unique:products,nama_produk,' . $this->product->id,
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
-        ]);
+        ];
+
+        $messages = [
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'nama_produk.string' => 'Nama produk tidak valid.',
+            'nama_produk.unique' => 'Nama produk sudah digunakan.',
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'gender.required' => 'Jenis kelamin produk wajib dipilih.',
+            'gender.in' => 'Pilihan gender tidak valid.',
+            'bahan.max' => 'Panjang teks bahan maksimal :max karakter.',
+            'foto.image' => 'File foto harus berupa gambar.',
+            'foto.mimes' => 'Format foto harus: jpg, jpeg, png, gif, webp.',
+            'foto.max' => 'Ukuran foto maksimal :max KB.',
+            'item_fotos.*.image' => 'File foto item harus berupa gambar.',
+            'item_fotos.*.mimes' => 'Format foto item harus: jpg, jpeg, png, gif, webp.',
+            'item_fotos.*.max' => 'Ukuran foto item maksimal :max KB.',
+        ];
+
+        $attributes = [
+            'nama_produk' => 'Nama produk',
+            'category_id' => 'Kategori',
+            'foto' => 'Foto produk',
+            'item_fotos.*' => 'Foto item',
+        ];
+
+        $this->validate($rules, $messages, $attributes);
 
         $fotoPath = $this->product->foto;
-        if ($this->foto instanceof TemporaryUploadedFile) {
+        if ($this->foto && method_exists($this->foto, 'getRealPath')) {
             $fotoPath = $this->storeImageAsWebp($this->foto, 'products');
         }
 
@@ -179,7 +204,7 @@ class Edit extends Component
 
         foreach ($this->items as $index => $data) {
             $fotoPath = null;
-            if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] instanceof TemporaryUploadedFile) {
+            if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] && method_exists($this->item_fotos[$index], 'getRealPath')) {
                 $fotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
             } elseif (isset($this->item_fotos[$index])) {
                 $fotoPath = $this->item_fotos[$index];
@@ -219,10 +244,12 @@ class Edit extends Component
             }
         }
 
+        session()->flash('success', 'Perubahan produk berhasil disimpan.');
+
         return redirect()->to('/products/' . $this->product->id);
     }
 
-    private function storeImageAsWebp(TemporaryUploadedFile $file, string $folder): string
+    private function storeImageAsWebp($file, string $folder): string
     {
         $realPath = $file->getRealPath();
         $binary = @file_get_contents($realPath);

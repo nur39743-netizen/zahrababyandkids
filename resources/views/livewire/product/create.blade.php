@@ -4,17 +4,34 @@
         <a href="/products" class="text-gray-400 hover:text-pink-600 transition">Batal</a>
     </div>
 
-    <form wire:submit="save" class="space-y-6">
+
+
+    <form wire:submit.prevent="save" class="space-y-6">
+        @if (session()->has('error'))
+        <div class="text-red-600 bg-red-50 border border-red-100 p-3 rounded text-sm">{{ session('error') }}</div>
+        @endif
+
+        @if($errors->any())
+        <div class="text-red-600 bg-red-50 border border-red-100 p-3 rounded text-sm">
+            <ul class="list-disc pl-4">
+                @foreach($errors->all() as $err)
+                <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <!-- Basic Info -->
         <div class="bg-white p-5 rounded-xl shadow-sm border border-pink-50 space-y-4">
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Nama Produk <span class="text-red-500">*</span></label>
                 <input type="text" wire:model="nama_produk" required class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @error('nama_produk') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
             </div>
 
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Produk</label>
                 <input type="file" wire:model="foto" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @error('foto') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
                 @if($foto)
                 <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
                 @endif
@@ -106,6 +123,7 @@
             <div>
                 <label class="block text-xs font-semibold tracking-wide text-gray-500 mb-1">Foto Item</label>
                 <input type="file" wire:model="item_fotos.0" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2 border shadow-inner">
+                @error('item_fotos.0') <div class="text-red-500 text-sm mt-1">{{ $message }}</div> @enderror
                 @if(isset($item_fotos[0]))
                 <img src="{{ $item_fotos[0]->temporaryUrl() }}" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-lg border">
                 @endif
@@ -216,6 +234,7 @@
                             </td>
                             <td class="py-2 px-1">
                                 <input type="file" wire:model="item_fotos.{{$index}}" accept=".jpg,.jpeg,.png,.gif,.webp" class="w-16 text-[10px]">
+                                @error('item_fotos.'.$index) <div class="text-red-500 text-[10px] mt-1">{{ $message }}</div> @enderror
                                 @if(isset($item_fotos[$index]))
                                 <img src="{{ $item_fotos[$index]->temporaryUrl() }}" alt="Preview" class="mt-1 w-8 h-8 object-cover rounded">
                                 @endif
@@ -236,8 +255,11 @@
         @endif
         @endif
 
-        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
-            Simpan Produk
+        <button type="submit" wire:loading.attr="disabled" wire:target="save" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 disabled:opacity-50">
+            <span wire:loading wire:target="save">Menyimpan...</span>
+            <span wire:loading.remove wire:target="save">Simpan Produk</span>
         </button>
     </form>
+
+
 </div>

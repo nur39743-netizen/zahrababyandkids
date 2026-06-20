@@ -14,7 +14,7 @@ use App\Services\ProductCodeService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+// Note: avoid strict TemporaryUploadedFile type-hint to be compatible with various Livewire versions
 
 class Create extends Component
 {
@@ -134,20 +134,45 @@ class Create extends Component
 
     public function save()
     {
-        $this->validate([
+        $rules = [
             'nama_produk' => 'required|string|unique:products,nama_produk',
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
-        ]);
+        ];
+
+        $messages = [
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'nama_produk.string' => 'Nama produk tidak valid.',
+            'nama_produk.unique' => 'Nama produk sudah digunakan.',
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'gender.required' => 'Jenis kelamin produk wajib dipilih.',
+            'gender.in' => 'Pilihan gender tidak valid.',
+            'bahan.max' => 'Panjang teks bahan maksimal :max karakter.',
+            'foto.image' => 'File foto harus berupa gambar.',
+            'foto.mimes' => 'Format foto harus: jpg, jpeg, png, gif, webp.',
+            'foto.max' => 'Ukuran foto maksimal :max KB.',
+            'item_fotos.*.image' => 'File foto item harus berupa gambar.',
+            'item_fotos.*.mimes' => 'Format foto item harus: jpg, jpeg, png, gif, webp.',
+            'item_fotos.*.max' => 'Ukuran foto item maksimal :max KB.',
+        ];
+
+        $attributes = [
+            'nama_produk' => 'Nama produk',
+            'category_id' => 'Kategori',
+            'foto' => 'Foto produk',
+            'item_fotos.*' => 'Foto item',
+        ];
+
+        $this->validate($rules, $messages, $attributes);
 
         DB::beginTransaction();
         try {
             $productFotoPath = null;
 
-            if ($this->foto instanceof TemporaryUploadedFile) {
+            if ($this->foto && method_exists($this->foto, 'getRealPath')) {
                 $productFotoPath = $this->storeImageAsWebp($this->foto, 'products');
             }
 
@@ -171,7 +196,7 @@ class Create extends Component
             if ($this->has_variant && count($this->matrix) > 0) {
                 foreach ($this->matrix as $index => $m) {
                     $itemFotoPath = null;
-                    if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] instanceof TemporaryUploadedFile) {
+                    if (isset($this->item_fotos[$index]) && $this->item_fotos[$index] && method_exists($this->item_fotos[$index], 'getRealPath')) {
                         $itemFotoPath = $this->storeImageAsWebp($this->item_fotos[$index], 'product_items');
                     }
 
@@ -188,7 +213,7 @@ class Create extends Component
                 }
             } else {
                 $itemFotoPath = null;
-                if (isset($this->item_fotos[0]) && $this->item_fotos[0] instanceof TemporaryUploadedFile) {
+                if (isset($this->item_fotos[0]) && $this->item_fotos[0] && method_exists($this->item_fotos[0], 'getRealPath')) {
                     $itemFotoPath = $this->storeImageAsWebp($this->item_fotos[0], 'product_items');
                 }
 
@@ -210,15 +235,18 @@ class Create extends Component
                 $cat->save();
             }
 
+            session()->flash('success', 'Produk berhasil disimpan.');
+
             return redirect()->to('/products');
         } catch (\Throwable $e) {
             DB::rollBack();
             \Illuminate\Support\Facades\Log::error('Gagal menyimpan produk: ' . $e->getMessage() . ' di baris ' . $e->getLine());
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            $errMsg = 'Terjadi kesalahan: ' . $e->getMessage();
+            session()->flash('error', $errMsg);
         }
     }
 
-    private function storeImageAsWebp(TemporaryUploadedFile $file, string $folder): string
+    private function storeImageAsWebp($file, string $folder): string
     {
         $realPath = $file->getRealPath();
         $binary = @file_get_contents($realPath);

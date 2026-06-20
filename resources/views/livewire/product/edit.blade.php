@@ -4,7 +4,9 @@
         <a href="/products/{{ $product->id }}" class="text-gray-400 hover:text-pink-600 transition">Batal</a>
     </div>
 
-    <form wire:submit="save" class="space-y-6">
+
+
+    <form wire:submit.prevent="save" class="space-y-6">
         <!-- Basic Info -->
         <div class="bg-white p-5 rounded-xl shadow-sm border border-pink-50 space-y-4">
             <div>
@@ -151,8 +153,9 @@
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
-            Simpan Perubahan
+        <button type="submit" wire:loading.attr="disabled" wire:target="save" class="w-full bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 disabled:opacity-50">
+            <span wire:loading wire:target="save">Menyimpan...</span>
+            <span wire:loading.remove wire:target="save">Simpan Perubahan</span>
         </button>
     </form>
 
