@@ -144,15 +144,21 @@ class Edit extends Component
     public function save()
     {
         $rules = [
-            'nama_produk' => [
-                'required',
-                'string',
-                \Illuminate\Validation\Rule::unique('products', 'nama_produk')->ignore($this->product->id)->whereNull('deleted_at')
-            ],
+            'nama_produk' => 'required|string',
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
         ];
+
+        if (trim((string) $this->nama_produk) !== trim((string) $this->product->nama_produk)) {
+            $rules['nama_produk'] = [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('products', 'nama_produk')
+                    ->ignore($this->product->id)
+                    ->whereNull('deleted_at'),
+            ];
+        }
 
         if ($this->foto && !is_string($this->foto)) {
             $rules['foto'] = 'image|mimes:jpg,jpeg,png,gif,webp|max:51200';
