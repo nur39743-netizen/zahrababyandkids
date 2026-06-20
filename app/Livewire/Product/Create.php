@@ -310,36 +310,57 @@ class Create extends Component
         // Prefer WebP when supported
         if (function_exists('imagewebp')) {
             $filename = $folder . '/' . Str::random(40) . '.webp';
-            ob_start();
-            imagewebp($image, null, 80);
-            $out = ob_get_clean();
-            imagedestroy($image);
-            if ($out === false) {
+            $tmp = tempnam(sys_get_temp_dir(), 'img');
+            if ($tmp === false) {
+                imagedestroy($image);
+                throw new \RuntimeException('Failed to create temp file for image conversion.');
+            }
+            if (!imagewebp($image, $tmp, 80)) {
+                @unlink($tmp);
+                imagedestroy($image);
                 throw new \RuntimeException('Failed to encode image as WebP.');
             }
-            Storage::disk('public')->put($filename, $out);
+            imagedestroy($image);
+            Storage::disk('public')->put($filename, fopen($tmp, 'r'));
+            @unlink($tmp);
             return $filename;
         }
 
         // Fallback to JPEG
         if (function_exists('imagejpeg')) {
             $filename = $folder . '/' . Str::random(40) . '.jpg';
-            ob_start();
-            imagejpeg($image, null, 85);
-            $out = ob_get_clean();
+            $tmp = tempnam(sys_get_temp_dir(), 'img');
+            if ($tmp === false) {
+                imagedestroy($image);
+                throw new \RuntimeException('Failed to create temp file for image conversion.');
+            }
+            if (!imagejpeg($image, $tmp, 85)) {
+                @unlink($tmp);
+                imagedestroy($image);
+                throw new \RuntimeException('Failed to encode image as JPEG.');
+            }
             imagedestroy($image);
-            Storage::disk('public')->put($filename, $out);
+            Storage::disk('public')->put($filename, fopen($tmp, 'r'));
+            @unlink($tmp);
             return $filename;
         }
 
         // Fallback to PNG
         if (function_exists('imagepng')) {
             $filename = $folder . '/' . Str::random(40) . '.png';
-            ob_start();
-            imagepng($image);
-            $out = ob_get_clean();
+            $tmp = tempnam(sys_get_temp_dir(), 'img');
+            if ($tmp === false) {
+                imagedestroy($image);
+                throw new \RuntimeException('Failed to create temp file for image conversion.');
+            }
+            if (!imagepng($image, $tmp)) {
+                @unlink($tmp);
+                imagedestroy($image);
+                throw new \RuntimeException('Failed to encode image as PNG.');
+            }
             imagedestroy($image);
-            Storage::disk('public')->put($filename, $out);
+            Storage::disk('public')->put($filename, fopen($tmp, 'r'));
+            @unlink($tmp);
             return $filename;
         }
 
