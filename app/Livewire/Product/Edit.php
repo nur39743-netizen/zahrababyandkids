@@ -148,9 +148,19 @@ class Edit extends Component
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
-            'item_fotos.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
         ];
+
+        if ($this->foto && !is_string($this->foto)) {
+            $rules['foto'] = 'image|mimes:jpg,jpeg,png,gif,webp|max:51200';
+        }
+
+        if (!empty($this->item_fotos)) {
+            foreach ($this->item_fotos as $k => $f) {
+                if ($f && !is_string($f)) {
+                    $rules["item_fotos.$k"] = 'image|mimes:jpg,jpeg,png,gif,webp|max:51200';
+                }
+            }
+        }
 
         $messages = [
             'nama_produk.required' => 'Nama produk wajib diisi.',
@@ -164,18 +174,25 @@ class Edit extends Component
             'foto.mimes' => 'Format foto harus: jpg, jpeg, png, gif, webp.',
             'foto.max' => 'Ukuran foto maksimal :max KB.',
             'foto.uploaded' => 'Upload foto gagal. Pastikan ukuran file dan koneksi upload valid.',
-            'item_fotos.*.image' => 'File foto item harus berupa gambar.',
-            'item_fotos.*.mimes' => 'Format foto item harus: jpg, jpeg, png, gif, webp.',
-            'item_fotos.*.max' => 'Ukuran foto item maksimal :max KB.',
-            'item_fotos.*.uploaded' => 'Upload foto item gagal. Pastikan ukuran file dan koneksi upload valid.',
         ];
 
         $attributes = [
             'nama_produk' => 'Nama produk',
             'category_id' => 'Kategori',
             'foto' => 'Foto produk',
-            'item_fotos.*' => 'Foto item',
         ];
+
+        if (!empty($this->item_fotos)) {
+            foreach ($this->item_fotos as $k => $f) {
+                if ($f && !is_string($f)) {
+                    $messages["item_fotos.$k.image"] = 'File foto item harus berupa gambar.';
+                    $messages["item_fotos.$k.mimes"] = 'Format foto item harus: jpg, jpeg, png, gif, webp.';
+                    $messages["item_fotos.$k.max"] = 'Ukuran foto item maksimal :max KB.';
+                    $messages["item_fotos.$k.uploaded"] = 'Upload foto item gagal.';
+                    $attributes["item_fotos.$k"] = 'Foto item';
+                }
+            }
+        }
 
         $this->validate($rules, $messages, $attributes);
 
