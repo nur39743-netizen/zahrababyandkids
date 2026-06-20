@@ -135,7 +135,11 @@ class Create extends Component
     public function save()
     {
         $rules = [
-            'nama_produk' => 'required|string|unique:products,nama_produk',
+            'nama_produk' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('products', 'nama_produk')->whereNull('deleted_at')
+            ],
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',

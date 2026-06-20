@@ -31,7 +31,24 @@ class Transaction extends Model
     protected static function booted()
     {
         static::deleting(function (Transaction $transaction) {
-            if ($transaction->isForceDeleting()) {
+            // Restore stock when a transaction is soft deleted.
+            if (! $transaction->isForceDeleting()) {
+                foreach ($transaction->items as $item) {
+                    if ($item->productItem) {
+                        $item->productItem->increment('stok_akhir', $item->qty);
+                    }
+                }
+            }
+
+            // If force deleting from an active transaction, restore stock first as well.
+            if ($transaction->isForceDeleting() && ! $transaction->trashed()) {
+                foreach ($transaction->items()->withTrashed()->get() as $item) {
+                    if ($item->productItem) {
+                        $item->productItem->increment('stok_akhir', $item->qty);
+                    }
+                }
+                $transaction->items()->withTrashed()->forceDelete();
+            } elseif ($transaction->isForceDeleting()) {
                 $transaction->items()->withTrashed()->forceDelete();
             } else {
                 $transaction->items()->delete();
@@ -39,6 +56,12 @@ class Transaction extends Model
         });
 
         static::restoring(function (Transaction $transaction) {
+            // Reapply stock reductions when restoring a soft deleted transaction.
+            foreach ($transaction->items()->withTrashed()->get() as $item) {
+                if ($item->productItem) {
+                    $item->productItem->decrement('stok_akhir', $item->qty);
+                }
+            }
             $transaction->items()->withTrashed()->restore();
         });
     }

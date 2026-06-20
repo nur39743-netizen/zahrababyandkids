@@ -144,7 +144,11 @@ class Edit extends Component
     public function save()
     {
         $rules = [
-            'nama_produk' => 'required|string|unique:products,nama_produk,' . $this->product->id,
+            'nama_produk' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('products', 'nama_produk')->ignore($this->product->id)->whereNull('deleted_at')
+            ],
             'category_id' => 'required',
             'gender' => 'required|in:male,female,unisex',
             'bahan' => 'nullable|string|max:255',
