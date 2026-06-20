@@ -172,6 +172,21 @@ class Create extends Component
             'item_fotos.*' => 'Foto item',
         ];
 
+        // Pre-check upload size against server PHP limits to avoid hard failures
+        $serverLimit = min($this->iniSizeToBytes(ini_get('upload_max_filesize')), $this->iniSizeToBytes(ini_get('post_max_size')));
+        if ($this->foto && method_exists($this->foto, 'getSize') && $this->foto->getSize() > $serverLimit) {
+            $this->addError('foto', 'Ukuran file melebihi batas server (' . $this->bytesToHuman($serverLimit) . ').');
+            return;
+        }
+        if (!empty($this->item_fotos)) {
+            foreach ($this->item_fotos as $k => $f) {
+                if ($f && method_exists($f, 'getSize') && $f->getSize() > $serverLimit) {
+                    $this->addError('item_fotos.' . $k, 'Ukuran file item melebihi batas server (' . $this->bytesToHuman($serverLimit) . ').');
+                    return;
+                }
+            }
+        }
+
         $this->validate($rules, $messages, $attributes);
 
         DB::beginTransaction();
@@ -335,6 +350,37 @@ class Create extends Component
         $filename = $folder . '/' . Str::random(40) . '.' . $ext;
         Storage::disk('public')->put($filename, $binary);
         return $filename;
+    }
+
+    private function iniSizeToBytes($size)
+    {
+        $size = trim($size);
+        if ($size === '') return PHP_INT_MAX;
+        $unit = strtolower(substr($size, -1));
+        $value = (float) rtrim($size, 'bkmgtpezyBKMGTP');
+        switch ($unit) {
+            case 'g':
+                $value *= 1024;
+            case 'm':
+                $value *= 1024;
+            case 'k':
+                $value *= 1024;
+        }
+        return (int) $value;
+    }
+
+    private function bytesToHuman($bytes)
+    {
+        if ($bytes >= 1073741824) {
+            return round($bytes / 1073741824, 2) . ' GB';
+        }
+        if ($bytes >= 1048576) {
+            return round($bytes / 1048576, 2) . ' MB';
+        }
+        if ($bytes >= 1024) {
+            return round($bytes / 1024, 2) . ' KB';
+        }
+        return $bytes . ' B';
     }
 
     public function render()
