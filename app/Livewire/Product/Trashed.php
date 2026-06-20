@@ -19,6 +19,7 @@ class Trashed extends Component
 
     public function forceDelete($id)
     {
+        abort_if(auth()->user()->role === 'admin', 403, 'Admin tidak diizinkan menghapus data.');
         $product = Product::withTrashed()->find($id);
         if ($product) {
             // Hapus semua transaction_items terkait

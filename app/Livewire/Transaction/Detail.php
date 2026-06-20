@@ -16,6 +16,7 @@ class Detail extends Component
 
     public function delete()
     {
+        abort_if(auth()->user()->role === 'admin', 403, 'Admin tidak diizinkan menghapus data.');
         $this->transaction->delete();
         return redirect('/transactions')->with('success', 'Transaksi berhasil dinonaktifkan.');
     }

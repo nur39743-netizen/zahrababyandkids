@@ -20,6 +20,7 @@ class Index extends Component
 
     public function deleteAttribute($id)
     {
+        abort_if(auth()->user()->role === 'admin', 403, 'Admin tidak diizinkan menghapus data.');
         VariantAttribute::find($id)->delete();
     }
 
@@ -38,6 +39,7 @@ class Index extends Component
 
     public function deleteOption($id)
     {
+        abort_if(auth()->user()->role === 'admin', 403, 'Admin tidak diizinkan menghapus data.');
         VariantOption::find($id)->delete();
     }
 

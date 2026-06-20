@@ -22,6 +22,7 @@ class Index extends Component
 
     public function delete($id)
     {
+        abort_if(auth()->user()->role === 'admin', 403, 'Admin tidak diizinkan menghapus data.');
         Category::find($id)->delete();
     }
 
