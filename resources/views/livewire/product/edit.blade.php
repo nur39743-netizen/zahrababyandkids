@@ -6,7 +6,7 @@
 
 
 
-    <form wire:submit.prevent="save" class="space-y-6">
+    <form wire:submit.prevent="save" enctype="multipart/form-data" class="space-y-6">
         <!-- Basic Info -->
         <div class="bg-white p-5 rounded-xl shadow-sm border border-pink-50 space-y-4">
             <div>

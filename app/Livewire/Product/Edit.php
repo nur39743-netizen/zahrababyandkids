@@ -163,9 +163,11 @@ class Edit extends Component
             'foto.image' => 'File foto harus berupa gambar.',
             'foto.mimes' => 'Format foto harus: jpg, jpeg, png, gif, webp.',
             'foto.max' => 'Ukuran foto maksimal :max KB.',
+            'foto.uploaded' => 'Upload foto gagal. Pastikan ukuran file dan koneksi upload valid.',
             'item_fotos.*.image' => 'File foto item harus berupa gambar.',
             'item_fotos.*.mimes' => 'Format foto item harus: jpg, jpeg, png, gif, webp.',
             'item_fotos.*.max' => 'Ukuran foto item maksimal :max KB.',
+            'item_fotos.*.uploaded' => 'Upload foto item gagal. Pastikan ukuran file dan koneksi upload valid.',
         ];
 
         $attributes = [

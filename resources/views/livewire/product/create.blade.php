@@ -6,7 +6,7 @@
 
 
 
-    <form wire:submit.prevent="save" class="space-y-6">
+    <form wire:submit.prevent="save" enctype="multipart/form-data" class="space-y-6">
         @if (session()->has('error'))
         <div class="text-red-600 bg-red-50 border border-red-100 p-3 rounded text-sm">{{ session('error') }}</div>
         @endif
