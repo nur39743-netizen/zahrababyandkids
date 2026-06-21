@@ -23,11 +23,11 @@
 
     @auth
     <!-- Header (Optional Topbar) -->
-    <header class="bg-white shadow relative z-20">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold font-barbie text-pink-600">{{ $title ?? 'Zahrababyandkids' }}</h1>
+    <header class="bg-white shadow fixed top-0 left-0 right-0 z-20">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center relative">
+            <h1 class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-bold font-barbie text-pink-600">{{ $title ?? 'Zahra Baby & Kids' }}</h1>
 
-            <form action="/logout" method="POST" class="m-0 p-0">
+            <form action="/logout" method="POST" class="m-0 p-0 ml-auto">
                 @csrf
                 <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition shadow-sm" title="Logout">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
     @endauth
 
     <!-- Main Content -->
-    <main class="flex-1 w-full max-w-md mx-auto {{ auth()->check() ? 'p-4 mb-20' : '' }}">
+    <main class="flex-1 w-full max-w-md mx-auto {{ auth()->check() ? 'pt-20 p-4 mb-20' : '' }}">
         {{ $slot }}
     </main>
 

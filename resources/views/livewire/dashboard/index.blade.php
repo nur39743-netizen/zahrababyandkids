@@ -6,7 +6,7 @@
 
         <div class="relative z-10 hidden lg:block"></div>
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold font-serif mb-1 tracking-wide text-white">Halo, {{ auth()->user()->name }} 👋</h2>
+            <h2 class="text-2xl font-bold font-barbie mb-1 tracking-wide text-white">Halo, {{ auth()->user()->name }} 👋</h2>
             <p class="text-xs text-pink-100 opacity-20 mb-5 font-medium tracking-wide"></p>
 
             @if(auth()->user()->role === 'super_admin')
