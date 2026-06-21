@@ -13,6 +13,7 @@ class Index extends Component
 
     public $search = '';
     public $selectedOwner = ''; // '' = semua, 'milik_sendiri' = toko, int = ID konsinyasi
+    public $sortBy = 'newest'; // newest, best_sellers, most_stock, least_stock, oldest_stock
 
     public ?string $previewUrl = null;
 
@@ -22,14 +23,18 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
-    public function selectOwner($value)
+
+    public function updatingSelectedOwner()
     {
-        $this->selectedOwner = $value;
         $this->resetPage();
     }
 
-    public function openPreview(int $productId): void
+    public function updatingSortBy()
+    {
+        $this->resetPage();
+    }
+
+    public function openPreview($productId): void
     {
         $product = Product::query()->find($productId);
         if (! $product || ! $product->foto) {
@@ -53,23 +58,37 @@ class Index extends Component
             ->withSum('items', 'stok_akhir')
             ->withMin('items', 'harga_jual')
             ->withMax('items', 'harga_jual')
-            ->when($this->search, function($query) {
-                $query->where(function($q) {
-                    $q->where('nama_produk', 'like', '%'.$this->search.'%')
-                      ->orWhere('kode_produk', 'like', '%'.$this->search.'%')
-                      ->orWhereHas('owner', function($qo) {
-                          $qo->where('nama_owner', 'like', '%'.$this->search.'%');
-                      });
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('nama_produk', 'like', '%' . $this->search . '%')
+                        ->orWhere('kode_produk', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('owner', function ($qo) {
+                            $qo->where('nama_owner', 'like', '%' . $this->search . '%');
+                        });
                 });
             })
-            ->when($this->selectedOwner !== '', function($query) {
+            ->when($this->selectedOwner !== '', function ($query) {
                 if ($this->selectedOwner === 'milik_sendiri') {
                     $query->whereNull('owner_id');
                 } else {
                     $query->where('owner_id', $this->selectedOwner);
                 }
             })
-            ->orderBy('id', 'desc')
+            ->when($this->sortBy === 'best_sellers', function ($query) {
+                $query->orderByDesc('total_terjual');
+            })
+            ->when($this->sortBy === 'most_stock', function ($query) {
+                $query->orderByDesc('items_sum_stok_akhir');
+            })
+            ->when($this->sortBy === 'least_stock', function ($query) {
+                $query->orderBy('items_sum_stok_akhir');
+            })
+            ->when($this->sortBy === 'oldest_stock', function ($query) {
+                $query->orderBy('created_at');
+            })
+            ->when($this->sortBy === 'newest', function ($query) {
+                $query->orderBy('id', 'desc');
+            })
             ->paginate(15);
 
         return view('livewire.product.index', [

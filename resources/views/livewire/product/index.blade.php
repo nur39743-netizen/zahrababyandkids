@@ -15,12 +15,29 @@
         <input type="text" wire:model.live.debounce.500ms="search" placeholder="Cari nama, kode, atau owner..." class="w-full rounded-xl border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2.5 sm:px-4 sm:py-3 border shadow-sm">
     </div>
 
-    <div class="flex overflow-x-auto gap-2 pb-2 mb-3 scrollbar-hide -mx-1 px-1">
-        <button wire:click="selectOwner('')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner === '' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Semua</button>
-        <button wire:click="selectOwner('milik_sendiri')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner === 'milik_sendiri' ? 'bg-pink-500 text-white' : 'bg-white text-gray-500 border border-gray-100 hover:bg-pink-50' }}">Milik Sendiri</button>
-        @foreach($owners as $own)
-        <button wire:click="selectOwner('{{ $own->id }}')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold shadow-sm transition {{ $selectedOwner == $own->id ? 'bg-pink-500 text-white' : 'bg-yellow-50 text-yellow-800 border border-yellow-100 hover:bg-yellow-100' }}">{{ $own->nama_owner }}</button>
-        @endforeach
+    <!-- Filter Controls: Owner & Sort Dropdowns -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <!-- Owner Filter Dropdown -->
+        <div class="flex-1 min-w-0">
+            <select wire:model.live="selectedOwner" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2.5 border shadow-sm bg-white">
+                <option value="">👥 Semua Owner</option>
+                <option value="milik_sendiri">📦 Milik Sendiri</option>
+                @foreach($owners as $own)
+                <option value="{{ $own->id }}">{{ $own->nama_owner }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Sort By Dropdown -->
+        <div class="flex-1 min-w-0">
+            <select wire:model.live="sortBy" class="w-full rounded-lg border-pink-200 focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2.5 border shadow-sm bg-white">
+                <option value="newest">⏰ Terbaru</option>
+                <option value="best_sellers">🔥 Paling Laris</option>
+                <option value="most_stock">📈 Stok Terbanyak</option>
+                <option value="least_stock">⚠️ Stok Sedikit</option>
+                <option value="oldest_stock">🕐 Stok Lama</option>
+            </select>
+        </div>
     </div>
 
     <div class="space-y-2.5 sm:space-y-3">
@@ -30,12 +47,7 @@
             <div class="flex gap-3 p-3 sm:p-3.5 relative z-10 pointer-events-none">
                 <div class="shrink-0 pointer-events-auto">
                     @if($prod->foto)
-                    <button
-                        type="button"
-                        class="w-[4.5rem] h-[4.5rem] sm:w-16 sm:h-16 rounded-xl border border-gray-100 overflow-hidden bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-1 shadow-inner"
-                        wire:click.stop="openPreview({{ $prod->id }})"
-                        aria-label="Preview foto {{ $prod->nama_produk }}"
-                    >
+                    <button type="button" class="w-[4.5rem] h-[4.5rem] sm:w-16 sm:h-16 rounded-xl border border-gray-100 overflow-hidden bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-1 shadow-inner" wire:click.stop="openPreview({{ $prod->id }})" aria-label="Preview foto {{ $prod->nama_produk }}">
                         <img src="{{ asset('storage/' . $prod->foto) }}" alt="" class="w-full h-full object-cover pointer-events-none">
                     </button>
                     @else
@@ -82,8 +94,8 @@
                         <span class="text-[10px] font-bold bg-violet-100 text-violet-800 border border-violet-200/80 px-2 py-0.5 rounded-md" title="Unisex">U</span>
                         @endif
                         @php
-                            $minJual = $prod->items_min_harga_jual;
-                            $maxJual = $prod->items_max_harga_jual;
+                        $minJual = $prod->items_min_harga_jual;
+                        $maxJual = $prod->items_max_harga_jual;
                         @endphp
                         @if($minJual !== null && $maxJual !== null)
                         <span class="text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md whitespace-nowrap" title="Harga jual (ecer)">
@@ -117,22 +129,10 @@
     </div>
 
     @if($previewUrl)
-    <div
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Preview foto produk"
-        wire:click="closePreview"
-        wire:key="product-photo-preview"
-    >
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Preview foto produk" wire:click="closePreview" wire:key="product-photo-preview">
         <div class="absolute inset-0 bg-black/70" aria-hidden="true"></div>
         <div class="relative max-w-full max-h-[90vh] inline-block" wire:click.stop>
-            <button
-                type="button"
-                class="absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full bg-white text-gray-700 shadow-lg border border-gray-200 flex items-center justify-center text-xl font-light leading-none hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                wire:click="closePreview"
-                aria-label="Tutup preview"
-            >&times;</button>
+            <button type="button" class="absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full bg-white text-gray-700 shadow-lg border border-gray-200 flex items-center justify-center text-xl font-light leading-none hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500" wire:click="closePreview" aria-label="Tutup preview">&times;</button>
             <img src="{{ $previewUrl }}" alt="{{ $previewAlt }}" class="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-lg shadow-2xl border border-white/20">
         </div>
     </div>
